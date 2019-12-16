@@ -1,5 +1,29 @@
 # tetris-fumen
 
+## Defines
+
+### Coordinate
+
+10x23 field + 1 garbage line
+
+```
+    |__________|          23 (top)
+    |__________|          22
+    |__________|          21
+    |__________|          20
+    |__________|          19
+   ~~~~~~~~~~~~~~~         .
+    |__________|           .
+    |___JJJ____|           .
+    |L__ZZJS___|           2
+    |L___ZZSSOO|           1
+    |LL IIIISOO|  <-  y =  0
+    ============
+    |XXXXXXXXX_|  <-  y = -1 (garbage line)
+     ^        ^
+ x = 0 ...... 9
+```
+
 ## Samples
 
 ### Load from fumen data
@@ -28,6 +52,8 @@ console.log(pages.length);  // 7
 
 ### Access to page
 
+This sample uses http://fumen.zui.jp/?v115@vhGRQYHAvItJEJmhCAUmBKpBvsBTtBGhBFqQPAUEzP?EJG98AQmqhECDdCA
+
 Javascript & Typescript
 
 ```
@@ -46,6 +72,12 @@ console.log(page.flags);
     rise: false,
 }
 */
+
+const field = page.field;
+console.log(field.at(4, 0));  // '_'  // empty
+
+field.put(page.operation);
+console.log(field.at(4, 0));  // 'I'
 ```
 
 * index: Page number. Start from 0
@@ -59,4 +91,5 @@ console.log(page.flags);
   - lock: If true, lock mino after placement
   - mirror: If true, flip field horizontally after placement
   - quiz: If true, comment is in quiz format
-  - rise: If true, rise garbage after placement
+  - rise: If true, rise garbage after placement  
+* field: Field object on the page before applying operation and flags
