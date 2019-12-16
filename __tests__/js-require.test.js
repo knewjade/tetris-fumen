@@ -1,4 +1,4 @@
-let { decoder } = require('../build');
+let { decoder } = require('..');
 
 describe('js-require', () => {
     test('promise', (done) => {

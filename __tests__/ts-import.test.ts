@@ -1,4 +1,4 @@
-import { decoder, Pages } from '../build';
+import { decoder, Pages } from '..';
 
 describe('usage', () => {
     test('case1', async () => {
