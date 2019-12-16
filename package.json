@@ -1,17 +1,28 @@
 {
   "name": "tetris-fumen",
+  "description": "Fumen parser for tetris",
   "version": "0.1.0",
-  "author": "knewjade <knewjade@gmail.com>",
+  "author": "knewjade <knewjade@gmail.com> (https://github.com/knewjade)",
+  "keywords": [
+    "tetris",
+    "fumen"
+  ],
   "license": "MIT",
+  "homepage": "https://github.com/knewjade/tetris-fumen",
+  "bugs": "https://github.com/knewjade/tetris-fumen/issues",
+  "repository": "github:knewjade/tetris-fumen",
+  "files": [
+    "README.md",
+    "package.json",
+    "index.js",
+    "index.d.ts",
+    "lib/"
+  ],
   "scripts": {
     "clean": "rm -rf build",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "build": "npm run clean && tsc"
   },
-  "bugs": {
-    "url": "https://github.com/knewjade/tetris-fumen/issues"
-  },
-  "homepage": "https://github.com/knewjade/tetris-fumen",
   "devDependencies": {
     "jest": "^24.9.0",
     "@types/jest": "^24.0.23",
