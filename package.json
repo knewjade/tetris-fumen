@@ -1,0 +1,25 @@
+{
+  "name": "tetris-fumen",
+  "version": "1.0.0",
+  "author": "knewjade <knewjade@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf build",
+    "lint": "tslint --project tsconfig.json --config tslint.json",
+    "build": "npm run clean && tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/knewjade/tetris-fumen/issues"
+  },
+  "homepage": "https://github.com/knewjade/tetris-fumen",
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "@types/jest": "^24.0.23",
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2"
+  },
+  "dependencies": {
+    "typescript": "^3.7.3"
+  }
+}
