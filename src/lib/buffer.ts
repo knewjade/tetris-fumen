@@ -13,7 +13,7 @@ export class Buffer {
         for (let count = 0; count < max; count += 1) {
             const v = this.values.shift();
             if (v === undefined) {
-                throw new Error('Unexpected fumen value');
+                throw new Error('Unexpected fumen');
             }
             value += v * Math.pow(ENCODE_TABLE_LENGTH, count);
         }

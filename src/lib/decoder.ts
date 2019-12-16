@@ -82,7 +82,7 @@ export function extract(str: string): { version: '115' | '110', data: string } {
     throw new Error('Unsupported fumen version');
 }
 
-export function decode(fumen: string): Promise<Pages> {
+export function decode(fumen: string): Pages {
     const { version, data } = extract(fumen);
     switch (version) {
     case '115':
@@ -93,7 +93,7 @@ export function decode(fumen: string): Promise<Pages> {
     throw new Error('Unsupported fumen version');
 }
 
-async function innerDecode(data: string, fieldTop: number): Promise<Pages> {
+function innerDecode(data: string, fieldTop: number): Pages {
     const fieldMaxHeight = fieldTop + FieldConstants.GarbageLine;
     const numFieldBlocks = fieldMaxHeight * FieldConstants.Width;
 

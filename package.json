@@ -19,7 +19,7 @@
     "lib/"
   ],
   "scripts": {
-    "clean": "rm -rf build",
+    "clean": "rm -rf lib/ && rm -f index.js index.d.ts",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "build": "npm run clean && tsc"
   },
