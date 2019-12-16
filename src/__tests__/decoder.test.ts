@@ -1,6 +1,6 @@
-import { decode, extract } from '../decoder';
-import { createNewField, Field, PlayField } from '../field';
-import { Piece, Rotation } from '../defines';
+import { decode, extract } from '../lib/decoder';
+import { createNewField, Field, PlayField } from '../lib/field';
+import { Piece, Rotation } from '../lib/defines';
 
 describe('decoder', () => {
     describe('extract', () => {

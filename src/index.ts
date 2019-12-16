@@ -1,4 +1,4 @@
-import { decode as _decode, Pages as _Pages } from './decoder';
+import { decode as _decode, Pages as _Pages } from './lib/decoder';
 
 export type Pages = _Pages;
 
