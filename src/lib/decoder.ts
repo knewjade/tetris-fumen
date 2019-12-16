@@ -1,20 +1,27 @@
-import { createNewField, Field } from './field';
+import { createNewInnerField, Inner_field } from './inner_field';
 import { Buffer } from './buffer';
-import { isMinoPiece, Operation, parsePieceName, parseRotationName, Piece, Rotation } from './defines';
+import {
+    isMinoPiece,
+    Operation,
+    parsePieceName,
+    parseRotationName,
+    Piece,
+    PieceType,
+    Rotation,
+    RotationType,
+} from './defines';
 import { createActionDecoder } from './action';
 import { createCommentDecoder } from './comments';
 import { Quiz } from './quiz';
-
-export type PieceType = 'I' | 'L' | 'O' | 'Z' | 'T' | 'J' | 'S' | 'Gray' | 'Empty';
-export type RotationType = 'Spawn' | 'Right' | 'Reverse' | 'Left';
+import { Field } from './field';
 
 export class Page {
-    private readonly _field: Field;
+    private readonly _field: Inner_field;
     private readonly _operation: Operation | undefined;
 
     constructor(
         public readonly index: number,
-        field: Field,
+        field: Inner_field,
         operation: Operation | undefined,
         public readonly comment: string,
         public readonly flags: { lock: boolean; mirror: boolean; colorize: boolean; rise: boolean; quiz: boolean },
@@ -25,7 +32,7 @@ export class Page {
     }
 
     get field(): Field {
-        return this._field;
+        return new Field(this._field);
     }
 
     get operation(): {
@@ -43,17 +50,6 @@ export class Page {
             x: this._operation.x,
             y: this._operation.y,
         };
-    }
-
-    get fieldAfterPlace(): Field {
-        const field = this._field.copy();
-
-        if (this._operation === undefined) {
-            return field;
-        }
-
-        field.put(this._operation);
-        return field;
     }
 }
 
@@ -116,7 +112,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
 
     const buffer = new Buffer(data);
 
-    const updateField = (prev: Field) => {
+    const updateField = (prev: Inner_field) => {
         const result = {
             changed: false,
             field: prev,
@@ -136,7 +132,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
             for (let block = 0; block < numOfBlocks + 1; block += 1) {
                 const x = index % FieldConstants.Width;
                 const y = fieldTop - Math.floor(index / FieldConstants.Width) - 1;
-                result.field.add(x, y, diff - 8);
+                result.field.addNumber(x, y, diff - 8);
                 index += 1;
             }
         }
@@ -145,7 +141,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
     };
 
     let pageIndex = 0;
-    let prevField = createNewField();
+    let prevField = createNewInnerField();
 
     const store: {
         repeatCount: number,

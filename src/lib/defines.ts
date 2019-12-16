@@ -10,11 +10,13 @@ export enum Piece {
     Gray = 8,
 }
 
+export type PieceType = 'I' | 'L' | 'O' | 'Z' | 'T' | 'J' | 'S' | 'X' | '_';
+
 export function isMinoPiece(piece: Piece) {
     return piece !== Piece.Empty && piece !== Piece.Gray;
 }
 
-export function parsePieceName(piece: Piece) {
+export function parsePieceName(piece: Piece): PieceType {
     switch (piece) {
     case Piece.I:
         return 'I';
@@ -31,14 +33,14 @@ export function parsePieceName(piece: Piece) {
     case Piece.S:
         return 'S';
     case Piece.Gray:
-        return 'Gray';
+        return 'X';
     case Piece.Empty:
-        return 'Empty';
+        return '_';
     }
     throw new Error('Unexpected piece');
 }
 
-export function parsePiece(piece: string) {
+export function parsePiece(piece: string): Piece {
     switch (piece.toUpperCase()) {
     case 'I':
         return Piece.I;
@@ -70,7 +72,9 @@ export enum Rotation {
     Left = 3,
 }
 
-export function parseRotationName(rotation: Rotation) {
+export type RotationType = 'Spawn' | 'Right' | 'Reverse' | 'Left';
+
+export function parseRotationName(rotation: Rotation): RotationType {
     switch (rotation) {
     case Rotation.Spawn:
         return 'Spawn';
@@ -80,6 +84,20 @@ export function parseRotationName(rotation: Rotation) {
         return 'Right';
     case Rotation.Reverse:
         return 'Reverse';
+    }
+    throw new Error('Unexpected rotation');
+}
+
+export function parseRotation(rotation: RotationType): Rotation {
+    switch (rotation) {
+    case 'Spawn':
+        return Rotation.Spawn;
+    case 'Left':
+        return Rotation.Left;
+    case 'Right':
+        return Rotation.Right;
+    case 'Reverse':
+        return Rotation.Reverse;
     }
     throw new Error('Unexpected rotation');
 }
