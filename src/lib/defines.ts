@@ -69,3 +69,24 @@ export enum Rotation {
     Reverse = 2,
     Left = 3,
 }
+
+export function parseRotationName(rotation: Rotation) {
+    switch (rotation) {
+    case Rotation.Spawn:
+        return 'Spawn';
+    case Rotation.Left:
+        return 'Left';
+    case Rotation.Right:
+        return 'Right';
+    case Rotation.Reverse:
+        return 'Reverse';
+    }
+    throw new Error('Unexpected rotation');
+}
+
+export interface Operation {
+    type: Piece;
+    rotation: Rotation;
+    x: number;
+    y: number;
+}

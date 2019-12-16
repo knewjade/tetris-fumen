@@ -1,41 +1,58 @@
 import { createNewField, Field } from './field';
 import { Buffer } from './buffer';
-import { isMinoPiece, Piece, Rotation } from './defines';
+import { isMinoPiece, Operation, parsePieceName, parseRotationName, Piece, Rotation } from './defines';
 import { createActionDecoder } from './action';
 import { createCommentDecoder } from './comments';
 import { Quiz } from './quiz';
 
+export type PieceType = 'I' | 'L' | 'O' | 'Z' | 'T' | 'J' | 'S' | 'Gray' | 'Empty';
+export type RotationType = 'Spawn' | 'Right' | 'Reverse' | 'Left';
+
 export class Page {
     private readonly _field: Field;
+    private readonly _operation: Operation | undefined;
 
     constructor(
         public readonly index: number,
-        field_: Field,
-        public readonly piece: {
-            type: Piece,
-            rotation: Rotation,
-            x: number,
-            y: number,
-        },
+        field: Field,
+        operation: Operation | undefined,
         public readonly comment: string,
         public readonly flags: { lock: boolean; mirror: boolean; colorize: boolean; rise: boolean; quiz: boolean },
         public readonly refs: { field?: number; comment?: number },
     ) {
-        this._field = field_.copy();
+        this._field = field.copy();
+        this._operation = operation;
     }
 
     get field(): Field {
         return this._field;
     }
 
+    get operation(): {
+        type: PieceType,
+        rotation: RotationType,
+        x: number,
+        y: number,
+    } | undefined {
+        if (this._operation === undefined) {
+            return undefined;
+        }
+        return {
+            type: parsePieceName(this._operation.type),
+            rotation: parseRotationName(this._operation.rotation),
+            x: this._operation.x,
+            y: this._operation.y,
+        };
+    }
+
     get fieldWithPiece(): Field {
         const field = this._field.copy();
 
-        if (this.piece === undefined) {
+        if (this._operation === undefined) {
             return field;
         }
 
-        field.put(this.piece);
+        field.put(this._operation);
         return field;
     }
 }

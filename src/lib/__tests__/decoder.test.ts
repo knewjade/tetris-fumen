@@ -1,6 +1,22 @@
 import { decode, extract } from '../decoder';
 import { createNewField, Field, PlayField } from '../field';
-import { Piece, Rotation } from '../defines';
+
+enum Piece {
+    I = 'I',
+    L = 'L',
+    O = 'O',
+    Z = 'Z',
+    T = 'T',
+    J = 'J',
+    S = 'S',
+}
+
+export enum Rotation {
+    Spawn = 'Spawn',
+    Right = 'Right',
+    Reverse = 'Reverse',
+    Left = 'Left',
+}
 
 describe('decoder', () => {
     describe('extract', () => {
@@ -66,7 +82,7 @@ describe('decoder', () => {
                 expect(page.index).toEqual(0);
                 expect(page.field).toEqual(new Field({}));
                 expect(page.comment).toEqual('');
-                expect(page.piece).toBeUndefined();
+                expect(page.operation).toBeUndefined();
                 expect(page.flags).toEqual({
                     lock: true,
                     mirror: false,
@@ -166,7 +182,7 @@ describe('decoder', () => {
 
             {
                 const page = pages[0];
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.I,
                     rotation: Rotation.Spawn,
                     x: 4,
@@ -231,7 +247,7 @@ describe('decoder', () => {
             {
                 const page = pages[0];
                 expect(page.comment).toEqual('#Q=[](L)TSJ');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.L,
                     rotation: Rotation.Spawn,
                     x: 8,
@@ -247,7 +263,7 @@ describe('decoder', () => {
             {
                 const page = pages[1];
                 expect(page.comment).toEqual('#Q=[](T)SJ');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.S,
                     rotation: Rotation.Spawn,
                     x: 6,
@@ -263,7 +279,7 @@ describe('decoder', () => {
             {
                 const page = pages[2];
                 expect(page.comment).toEqual('#Q=[T](J)');
-                expect(page.piece).toBeUndefined();
+                expect(page.operation).toBeUndefined();
                 expect(page.flags).toMatchObject({
                     quiz: true,
                 });
@@ -273,7 +289,7 @@ describe('decoder', () => {
             {
                 const page = pages[3];
                 expect(page.comment).toEqual('#Q=[T](J)');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.T,
                     rotation: Rotation.Right,
                     x: 4,
@@ -288,7 +304,7 @@ describe('decoder', () => {
             {
                 const page = pages[4];
                 expect(page.comment).toEqual('#Q=[](J)');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.J,
                     rotation: Rotation.Reverse,
                     x: 7,
@@ -304,7 +320,7 @@ describe('decoder', () => {
             {
                 const page = pages[5];
                 expect(page.comment).toEqual('');
-                expect(page.piece).toBeUndefined();
+                expect(page.operation).toBeUndefined();
                 expect(page.flags).toMatchObject({
                     lock: true,
                     quiz: true,
@@ -315,7 +331,7 @@ describe('decoder', () => {
             {
                 const page = pages[6];
                 expect(page.comment).toEqual('');
-                expect(page.piece).toBeUndefined();
+                expect(page.operation).toBeUndefined();
                 expect(page.flags).toMatchObject({
                     lock: true,
                     quiz: true,
@@ -343,7 +359,7 @@ describe('decoder', () => {
             {
                 const page = pages[0];
                 expect(page.comment).toEqual('#Q=[](J)Z');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.J,
                     rotation: Rotation.Spawn,
                     x: 8,
@@ -359,7 +375,7 @@ describe('decoder', () => {
             {
                 const page = pages[1];
                 expect(page.comment).toEqual('#Q=[](Z)');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.Z,
                     rotation: Rotation.Spawn,
                     x: 8,
@@ -375,7 +391,7 @@ describe('decoder', () => {
             {
                 const page = pages[2];
                 expect(page.comment).toEqual('');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.O,
                     rotation: Rotation.Spawn,
                     x: 0,
@@ -396,7 +412,7 @@ describe('decoder', () => {
             {
                 const page = pages[0];
                 expect(page.comment).toEqual('#Q=[](O)SIZLTJ');
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.L,
                     rotation: Rotation.Spawn,
                     x: 8,
@@ -411,7 +427,7 @@ describe('decoder', () => {
             {
                 const page = pages[1];
                 expect(page.comment).toEqual('#Q=[](O)SIZLTJ');
-                expect(page.piece).toBeUndefined();
+                expect(page.operation).toBeUndefined();
                 expect(page.flags).toMatchObject({
                     quiz: true,
                 });
@@ -541,7 +557,7 @@ describe('decoder', () => {
             {
                 const page = pages[0];
                 expect(page.comment).toEqual(quiz);
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.I,
                     rotation: Rotation.Spawn,
                     x: 1,
@@ -555,7 +571,7 @@ describe('decoder', () => {
 
             {
                 const page = pages[478];
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.S,
                     rotation: Rotation.Spawn,
                     x: 3,
@@ -587,7 +603,7 @@ describe('decoder', () => {
 
             {
                 const page = pages[1824];
-                expect(page.piece).toEqual({
+                expect(page.operation).toEqual({
                     type: Piece.L,
                     rotation: Rotation.Spawn,
                     x: 4,
@@ -604,7 +620,7 @@ describe('decoder', () => {
 
             {
                 const page = pages[1825];
-                expect(page.piece).toBeUndefined();
+                expect(page.operation).toBeUndefined();
                 expect(page.flags).toMatchObject({
                     quiz: true,
                 });

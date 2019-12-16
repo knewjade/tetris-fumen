@@ -1,4 +1,4 @@
-import { parsePiece, Piece, Rotation } from './defines';
+import { parsePiece, Piece, Rotation, Operation } from './defines';
 
 const FieldConstants = {
     Width: 10,
@@ -34,8 +34,8 @@ export class Field {
         }
     }
 
-    put(action: { type: Piece, rotation: Rotation, x: number, y: number }): void {
-        this.field.put(action);
+    put(operation: Operation): void {
+        this.field.put(operation);
     }
 
     setToPlayField(index: number, value: number): void {

@@ -1,12 +1,7 @@
-import { Piece, Rotation } from './defines';
+import { Operation, Piece, Rotation } from './defines';
 
 interface Action {
-    piece: {
-        type: Piece;
-        rotation: Rotation;
-        x: number;
-        y: number;
-    };
+    piece: Operation;
     rise: boolean;
     mirror: boolean;
     colorize: boolean;
