@@ -198,7 +198,7 @@ describe('decoder', () => {
                 });
                 expect(page.field).toEqual(new Field({}));
 
-                expect(page.fieldWithPiece).toEqual(new Field({
+                expect(page.fieldAfterPlace).toEqual(new Field({
                     field: PlayField.load(
                         '',
                         '__________',

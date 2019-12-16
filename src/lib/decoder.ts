@@ -45,7 +45,7 @@ export class Page {
         };
     }
 
-    get fieldWithPiece(): Field {
+    get fieldAfterPlace(): Field {
         const field = this._field.copy();
 
         if (this._operation === undefined) {
