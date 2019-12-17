@@ -23,6 +23,23 @@ export class Field {
         });
     }
 
+    canPut(operation?: {
+        type: PieceType;
+        rotation: RotationType;
+        x: number;
+        y: number;
+    }): void {
+        if (operation === undefined) {
+            return;
+        }
+
+        this.field.canPut(parsePiece(operation.type), parseRotation(operation.rotation), operation.x, operation.y);
+    }
+
+    clearLine(): void {
+        this.field.clearLine();
+    }
+
     at(x: number, y: number): PieceType {
         return parsePieceName(this.field.getNumberAt(x, y));
     }
