@@ -304,7 +304,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
 
         if (action.lock) {
             if (isMinoPiece(action.piece.type)) {
-                currentFieldObj.field.put(action.piece);
+                currentFieldObj.field.fill(action.piece);
             }
 
             currentFieldObj.field.clearLine();
