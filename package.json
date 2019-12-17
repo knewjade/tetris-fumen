@@ -1,7 +1,7 @@
 {
   "name": "tetris-fumen",
   "description": "Fumen parser for tetris",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "knewjade <knewjade@gmail.com> (https://github.com/knewjade)",
   "keywords": [
     "tetris",
