@@ -1,4 +1,4 @@
-import { decoder, encoder, Pages } from '..';
+import { decoder, EncodePages, encoder, Field, Pages } from '..';
 
 describe('usage', () => {
     test('decode', () => {
@@ -36,5 +36,51 @@ describe('usage', () => {
         const pages = decoder.decode(data);
         const encoded: string = encoder.encode(pages);
         expect(encoded).toEqual(data);
+    });
+
+    test('encode', () => {
+        const pages: EncodePages = [];
+        pages.push({
+            field: Field.create(
+                'LLL_______' +
+                'LOO_______' +
+                'JOO_______' +
+                'JJJ_______',
+                'XXXXXXXXX_',
+            ),
+            comment: 'Perfect Clear Opener',
+        });
+
+        pages.push({
+            operation: {
+                type: 'T', rotation: 'Left', x: 9, y: 1,
+            },
+        });
+
+        pages.push({
+            operation: {
+                type: 'Z', rotation: 'Spawn', x: 7, y: 0,
+            },
+        });
+
+        pages.push({
+            operation: {
+                type: 'S', rotation: 'Spawn', x: 8, y: 2,
+            },
+        });
+
+        pages.push({
+            comment: 'Success: 61.19 %',
+            flags: {
+                mirror: true,
+            },
+        });
+
+        pages.push({
+            comment: '(Mirror)',
+        });
+
+        const encoded: string = encoder.encode(pages);
+        expect(encoded).toEqual('v115@9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB');
     });
 });

@@ -73,10 +73,10 @@ console.log(page.flags);
 }
 */
 
-const field = page.field;
+const field = page.field;  // field object
 console.log(field.at(4, 0));  // '_'  // empty
 
-field.put(page.operation);
+field.put(page.operation);  // field object is mutable
 console.log(field.at(4, 0));  // 'I'
 ```
 
@@ -93,3 +93,56 @@ console.log(field.at(4, 0));  // 'I'
   - quiz: If true, comment is in quiz format
   - rise: If true, rise garbage after placement  
 * field: Field object on the page before applying operation and flags
+
+
+### Encode
+
+Typescript
+
+```
+import { encoder, EncodePages } from 'tetris-fumen';
+
+const pages: EncodePages = [];
+pages.push({
+    field: Field.create(
+        'LLL_______' +
+        'LOO_______' +
+        'JOO_______' +
+        'JJJ_______',
+        'XXXXXXXXX_',
+    ),
+    comment: 'Perfect Clear Opener',
+});
+
+pages.push({
+    operation: {
+        type: 'T', rotation: 'Left', x: 9, y: 1,
+    },
+});
+
+pages.push({
+    operation: {
+        type: 'Z', rotation: 'Spawn', x: 7, y: 0,
+    },
+});
+
+pages.push({
+    operation: {
+        type: 'S', rotation: 'Spawn', x: 8, y: 2,
+    },
+});
+
+pages.push({
+    comment: 'Success: 61.19 %',
+    flags: {
+        mirror: true,
+    },
+});
+
+pages.push({
+    comment: '(Mirror)',
+});
+
+const encoded: string = encoder.encode(pages);
+console.log(encoded);  // v115@9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB
+```

@@ -23,6 +23,8 @@ export interface EncodePage {
     };
 }
 
+export type EncodePages = EncodePage[];
+
 const FieldConstants = {
     GarbageLine: 1,
     Width: 10,

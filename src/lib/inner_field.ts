@@ -148,7 +148,7 @@ export class PlayField {
     private static loadInner(blocks: string, length?: number): PlayField {
         const len = length !== undefined ? length : blocks.length;
         if (len % 10 !== 0) {
-            throw new Error('Num of block in field should be mod 10');
+            throw new Error('Num of blocks in field should be mod 10');
         }
 
         const field = length !== undefined ? new PlayField({ length }) : new PlayField({});
