@@ -1,4 +1,4 @@
-import { createNewInnerField, Inner_field } from './inner_field';
+import { createNewInnerField, InnerField } from './inner_field';
 import { Buffer } from './buffer';
 import {
     isMinoPiece,
@@ -11,17 +11,17 @@ import {
     RotationType,
 } from './defines';
 import { createActionDecoder } from './action';
-import { createCommentDecoder } from './comments';
+import { createCommentParser } from './comments';
 import { Quiz } from './quiz';
 import { Field } from './field';
 
 export class Page {
-    private readonly _field: Inner_field;
+    private readonly _field: InnerField;
     private readonly _operation: Operation | undefined;
 
     constructor(
         public readonly index: number,
-        field: Inner_field,
+        field: InnerField,
         operation: Operation | undefined,
         public readonly comment: string,
         public readonly flags: { lock: boolean; mirror: boolean; colorize: boolean; rise: boolean; quiz: boolean },
@@ -32,7 +32,7 @@ export class Page {
     }
 
     get field(): Field {
-        return new Field(this._field);
+        return new Field(this._field.copy());
     }
 
     get operation(): {
@@ -112,7 +112,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
 
     const buffer = new Buffer(data);
 
-    const updateField = (prev: Inner_field) => {
+    const updateField = (prev: InnerField) => {
         const result = {
             changed: false,
             field: prev,
@@ -163,7 +163,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
 
     const pages: Pages = [];
     const actionDecoder = createActionDecoder(FieldConstants.Width, fieldTop, FieldConstants.GarbageLine);
-    const commentDecoder = createCommentDecoder();
+    const commentDecoder = createCommentParser();
 
     while (!buffer.isEmpty()) {
         // Parse field
@@ -310,7 +310,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
             currentFieldObj.field.clearLine();
 
             if (action.rise) {
-                currentFieldObj.field.up();
+                currentFieldObj.field.riseGarbage();
             }
 
             if (action.mirror) {

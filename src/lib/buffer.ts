@@ -1,7 +1,8 @@
 const ENCODE_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-const ENCODE_TABLE_LENGTH = ENCODE_TABLE.length;
 
 export class Buffer {
+    static readonly tableLength: number = ENCODE_TABLE.length;
+
     private readonly values: number[];
 
     constructor(data: string = '') {
@@ -15,7 +16,7 @@ export class Buffer {
             if (v === undefined) {
                 throw new Error('Unexpected fumen');
             }
-            value += v * Math.pow(ENCODE_TABLE_LENGTH, count);
+            value += v * Math.pow(Buffer.tableLength, count);
         }
         return value;
     }
@@ -23,8 +24,8 @@ export class Buffer {
     push(value: number, splitCount: number = 1): void {
         let current = value;
         for (let count = 0; count < splitCount; count += 1) {
-            this.values.push(current % ENCODE_TABLE_LENGTH);
-            current = Math.floor(current / ENCODE_TABLE_LENGTH);
+            this.values.push(current % Buffer.tableLength);
+            current = Math.floor(current / Buffer.tableLength);
         }
     }
 

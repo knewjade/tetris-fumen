@@ -1,5 +1,6 @@
 import { decode, extract } from '../decoder';
-import { createNewInnerField, Inner_field, PlayField } from '../inner_field';
+import { createNewInnerField, InnerField, PlayField } from '../inner_field';
+import { Field } from '../field';
 
 enum Piece {
     I = 'I',
@@ -16,6 +17,10 @@ export enum Rotation {
     Right = 'Right',
     Reverse = 'Reverse',
     Left = 'Left',
+}
+
+function to(field: InnerField) {
+    return new Field(field);
 }
 
 describe('decoder', () => {
@@ -80,7 +85,7 @@ describe('decoder', () => {
             {
                 const page = pages[0];
                 expect(page.index).toEqual(0);
-                expect(page.field).toEqual(new Inner_field({}));
+                expect(page.field).toEqual(to(new InnerField({})));
                 expect(page.comment).toEqual('');
                 expect(page.operation).toBeUndefined();
                 expect(page.flags).toEqual({
@@ -101,14 +106,14 @@ describe('decoder', () => {
 
             {
                 const page = pages[0];
-                expect(page.field).toEqual(new Inner_field({
+                expect(page.field).toEqual(to(new InnerField({
                     field: PlayField.load(
                         '',
                         'X_________',
                         'XX________',
                     ),
                     garbage: PlayField.loadMinify('XXX_______'),
-                }));
+                })));
                 expect(page.flags).toMatchObject({
                     mirror: true,
                     quiz: false,
@@ -117,14 +122,14 @@ describe('decoder', () => {
 
             {
                 const page = pages[1];
-                expect(page.field).toEqual(new Inner_field({
+                expect(page.field).toEqual(to(new InnerField({
                     field: PlayField.load(
                         '',
                         '_________X',
                         '________XX',
                     ),
                     garbage: PlayField.loadMinify('XXX_______'),
-                }));
+                })));
                 expect(page.flags).toMatchObject({
                     mirror: false,
                     quiz: false,
@@ -139,14 +144,14 @@ describe('decoder', () => {
 
             {
                 const page = pages[0];
-                expect(page.field).toEqual(new Inner_field({
+                expect(page.field).toEqual(to(new InnerField({
                     field: PlayField.load(
                         '',
                         'X_________',
                         'XX________',
                     ),
                     garbage: PlayField.loadMinify('XXX_______'),
-                }));
+                })));
                 expect(page.flags).toMatchObject({
                     rise: true,
                     quiz: false,
@@ -155,7 +160,7 @@ describe('decoder', () => {
 
             {
                 const page = pages[1];
-                expect(page.field).toEqual(new Inner_field({
+                expect(page.field).toEqual(to(new InnerField({
                     field: PlayField.load(
                         '',
                         'X_________',
@@ -163,7 +168,7 @@ describe('decoder', () => {
                         'XXX_______',
                     ),
                     garbage: PlayField.loadMinify('__________'),
-                }));
+                })));
                 expect(page.flags).toMatchObject({
                     rise: false,
                     quiz: false,
@@ -196,16 +201,20 @@ describe('decoder', () => {
                     rise: false,
                     quiz: false,
                 });
-                expect(page.field).toEqual(new Inner_field({}));
+                expect(page.field).toEqual(to(new InnerField({})));
 
-                expect(page.fieldAfterPlace).toEqual(new Inner_field({
+                const field = page.field;
+                field.put(page.operation);
+                expect(field).toEqual(to(new InnerField({
                     field: PlayField.load(
                         '',
                         '__________',
                         '___IIII___',
                     ),
                     garbage: PlayField.loadMinify('__________'),
-                }));
+                })));
+
+                expect(page.field).toEqual(to(new InnerField({})));
             }
         });
 
@@ -566,7 +575,7 @@ describe('decoder', () => {
                 expect(page.flags).toMatchObject({
                     quiz: true,
                 });
-                expect(page.field).toEqual(createNewInnerField());
+                expect(page.field).toEqual(to(createNewInnerField()));
             }
 
             {
@@ -580,7 +589,7 @@ describe('decoder', () => {
                 expect(page.flags).toMatchObject({
                     quiz: true,
                 });
-                expect(page.field).toEqual(new Inner_field({
+                expect(page.field).toEqual(to(new InnerField({
                     field: PlayField.load(
                         '_____Z____',
                         '____ZZ____',
@@ -597,7 +606,7 @@ describe('decoder', () => {
                         '__________',
                     ),
                     garbage: PlayField.loadMinify('__________'),
-                }));
+                })));
                 expect(page.refs.comment).toEqual(0);
             }
 

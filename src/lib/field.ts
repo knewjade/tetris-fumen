@@ -1,8 +1,8 @@
-import { Inner_field } from './inner_field';
+import { InnerField } from './inner_field';
 import { parsePiece, parsePieceName, parseRotation, PieceType, RotationType } from './defines';
 
 export class Field {
-    constructor(private readonly field: Inner_field) {
+    constructor(private readonly field: InnerField) {
     }
 
     put(operation?: {
@@ -25,5 +25,9 @@ export class Field {
 
     at(x: number, y: number): PieceType {
         return parsePieceName(this.field.getNumberAt(x, y));
+    }
+
+    copy(): Field {
+        return new Field(this.field.copy());
     }
 }

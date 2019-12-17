@@ -2,7 +2,7 @@ const COMMENT_TABLE =
     ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 const MAX_COMMENT_CHAR_VALUE = COMMENT_TABLE.length + 1;
 
-export const createCommentDecoder = () => {
+export const createCommentParser = () => {
     return {
         decode: (v: number): string => {
             let str: string = '';
@@ -13,6 +13,9 @@ export const createCommentDecoder = () => {
                 value = Math.floor(value / MAX_COMMENT_CHAR_VALUE);
             }
             return str;
+        },
+        encode: (ch: string, count: number): number => {
+            return COMMENT_TABLE.indexOf(ch) * Math.pow(MAX_COMMENT_CHAR_VALUE, count);
         },
     };
 };

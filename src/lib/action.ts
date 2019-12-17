@@ -1,4 +1,4 @@
-import { Operation, Piece, Rotation } from './defines';
+import { isMinoPiece, Operation, Piece, Rotation } from './defines';
 
 interface Action {
     piece: Operation;

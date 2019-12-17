@@ -1,4 +1,5 @@
 import { Operation, parsePiece, Piece, Rotation } from './defines';
+import { Field } from './field';
 
 const FieldConstants = {
     Width: 10,
@@ -6,11 +7,23 @@ const FieldConstants = {
     PlayBlocks: 23 * 10,  // Height * Width
 };
 
-export function createNewInnerField(): Inner_field {
-    return new Inner_field({});
+export function createNewInnerField(): InnerField {
+    return new InnerField({});
 }
 
-export class Inner_field {
+export function createInnerField(field: Field): InnerField {
+    const innerField = new InnerField({});
+    for (let y = 0; y < FieldConstants.Height; y += 1) {
+        for (let x = 0; x < FieldConstants.Width; x += 1) {
+            const at = field.at(x, y);
+            innerField.setNumberFieldAt(y * FieldConstants.Width + x, parsePiece(at));
+        }
+    }
+    // TODO: set garbage
+    return innerField;
+}
+
+export class InnerField {
     private readonly field: PlayField;
     private readonly garbage: PlayField;
 
@@ -19,8 +32,8 @@ export class Inner_field {
     }
 
     constructor({
-                    field = Inner_field.create(FieldConstants.PlayBlocks),
-                    garbage = Inner_field.create(FieldConstants.Width),
+                    field = InnerField.create(FieldConstants.PlayBlocks),
+                    garbage = InnerField.create(FieldConstants.Width),
                 }: {
                     field?: PlayField,
                     garbage?: PlayField,
@@ -74,11 +87,11 @@ export class Inner_field {
         this.field.shiftToBottom();
     }
 
-    copy(): Inner_field {
-        return new Inner_field({ field: this.field.copy(), garbage: this.garbage.copy() });
+    copy(): InnerField {
+        return new InnerField({ field: this.field.copy(), garbage: this.garbage.copy() });
     }
 
-    equals(other: Inner_field): boolean {
+    equals(other: InnerField): boolean {
         return this.field.equals(other.field) && this.garbage.equals(other.garbage);
     }
 
