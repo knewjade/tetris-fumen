@@ -172,19 +172,26 @@ field.str();
 // @param `separator`  Specify characters between lines 
 // @param `garbage`  If true, garbage is parsed
 
-// Check if can put piece
-field.canPut({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
+// Check if can fill piece
+field.canFill({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
 
-// Put piece
-field.put({ type: 'T', rotation: 'Left', x: 9, y: 1 });
+// Check if can fill and lock piece on the ground
+field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
+field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 2 });  // false
+
+// Fill piece even if not on the ground
+field.fill({ type: 'O', rotation: 'Spawn', x: 8, y: 0 });
+
+// Harddrop and fill piece to the ground
+field.put({ type: 'T', rotation: 'Left', x: 9, y: 10 });
 
 // Get block type
-field.at(9, 1);  // 'T'
+field.at(9, 0);  // 'O'
 
 // Set block
-field.set(9, 0, 'O');
-field.set(9, 1, 'Gray');
-field.set(9, 2, 'Empty');
+field.set(9, 2, 'O');
+field.set(9, 3, 'Gray');
+field.set(9, 4, 'Empty');
 
 // Copy field
 const copied = field.copy();

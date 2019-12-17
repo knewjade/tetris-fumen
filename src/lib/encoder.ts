@@ -176,7 +176,7 @@ export function encode(pages: EncodePage[]): string {
         // 地形の更新
         if (action.lock) {
             if (isMinoPiece(action.piece.type)) {
-                currentField.put(action.piece);
+                currentField.fill(action.piece);
             }
 
             currentField.clearLine();

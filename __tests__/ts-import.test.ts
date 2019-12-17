@@ -1,6 +1,6 @@
 import { decoder, EncodePages, encoder, Field, Pages } from '..';
 
-describe('usage', () => {
+describe('ts-import', () => {
     test('decode', () => {
         const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
         const pages: Pages = decoder.decode(data);
@@ -112,12 +112,15 @@ describe('usage', () => {
             'XXXXXXXXX_',
         );
 
-        field.str();
-        field.canPut({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
+        expect(field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 1 })).toBeTruthy();
+        expect(field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 2 })).toBeFalsy();
 
-        field.put({ type: 'T', rotation: 'Left', x: 9, y: 1 });
+        expect(field.canFill({ type: 'T', rotation: 'Left', x: 9, y: 1 })).toBeTruthy();
+        expect(field.canFill({ type: 'T', rotation: 'Left', x: 9, y: 2 })).toBeTruthy();
 
-        field.at(9, 1);  // 'T'
+        field.fill({ type: 'T', rotation: 'Left', x: 9, y: 1 });
+
+        expect(field.at(9, 1)).toEqual('T');
 
         expect(field.str({ separator: '' })).toEqual(
             'LLL_______' +
@@ -136,6 +139,16 @@ describe('usage', () => {
         expect(copied.str({ separator: '' })).toEqual(
             'LLL_______' +
             'LOO_______' +
+            'JOO_____TX' +
+            'JJJ______O' +
+            'XXXXXXXXX_',
+        );
+
+        copied.put({ type: 'O', rotation: 'Spawn', x: 8, y: 10 });
+
+        expect(copied.str({ separator: '' })).toEqual(
+            'LLL_____OO' +
+            'LOO_____OO' +
             'JOO_____TX' +
             'JJJ______O' +
             'XXXXXXXXX_',

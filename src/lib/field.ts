@@ -12,6 +12,61 @@ export class Field {
     constructor(private readonly field: InnerField) {
     }
 
+    canFill(operation?: {
+        type: PieceType;
+        rotation: RotationType;
+        x: number;
+        y: number;
+    }): boolean {
+        if (operation === undefined) {
+            return true;
+        }
+
+        return this.field.canFill(
+            parsePiece(operation.type), parseRotation(operation.rotation), operation.x, operation.y,
+        );
+    }
+
+    canLock(operation?: {
+        type: PieceType;
+        rotation: RotationType;
+        x: number;
+        y: number;
+    }): boolean {
+        if (operation === undefined) {
+            return true;
+        }
+
+        if (!this.canFill(operation)) {
+            return false;
+        }
+
+        // Check on the ground
+        return !this.canFill({ ...operation, y: operation.y - 1 });
+    }
+
+    fill(operation?: {
+        type: PieceType;
+        rotation: RotationType;
+        x: number;
+        y: number;
+    }): void {
+        if (operation === undefined) {
+            return;
+        }
+
+        if (!this.canLock(operation)) {
+            throw Error('Cannot fill piece on field');
+        }
+
+        this.field.fill({
+            type: parsePiece(operation.type),
+            rotation: parseRotation(operation.rotation),
+            x: operation.x,
+            y: operation.y,
+        });
+    }
+
     put(operation?: {
         type: PieceType;
         rotation: RotationType;
@@ -22,25 +77,24 @@ export class Field {
             return;
         }
 
-        this.field.put({
-            type: parsePiece(operation.type),
-            rotation: parseRotation(operation.rotation),
-            x: operation.x,
-            y: operation.y,
-        });
-    }
+        const op = { ...operation };
 
-    canPut(operation?: {
-        type: PieceType;
-        rotation: RotationType;
-        x: number;
-        y: number;
-    }): void {
-        if (operation === undefined) {
+        for (; 0 <= op.y; op.y -= 1) {
+            if (!this.canLock(op)) {
+                continue;
+            }
+
+            this.field.fill({
+                type: parsePiece(op.type),
+                rotation: parseRotation(op.rotation),
+                x: op.x,
+                y: op.y,
+            });
+
             return;
         }
 
-        this.field.canPut(parsePiece(operation.type), parseRotation(operation.rotation), operation.x, operation.y);
+        throw Error('Cannot put piece on field');
     }
 
     clearLine(): void {

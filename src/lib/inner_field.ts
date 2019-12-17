@@ -42,19 +42,21 @@ export class InnerField {
         this.garbage = garbage;
     }
 
-    put(operation: Operation): void {
-        this.field.put(operation);
+    fill(operation: Operation): void {
+        this.field.fill(operation);
     }
 
-    canPut(piece: Piece, rotation: Rotation, x: number, y: number) {
+    canFill(piece: Piece, rotation: Rotation, x: number, y: number) {
         const positions = getBlockPositions(piece, rotation, x, y);
         return positions.every(([px, py]) => {
-            return 0 <= px && px < 10 && 0 <= py && this.getNumberAt(px, py) === Piece.Empty;
+            return 0 <= px && px < 10
+                && 0 <= py && py < FieldConstants.Height
+                && this.getNumberAt(px, py) === Piece.Empty;
         });
     }
 
     isOnGround(piece: Piece, rotation: Rotation, x: number, y: number) {
-        return !this.canPut(piece, rotation, x, y - 1);
+        return !this.canFill(piece, rotation, x, y - 1);
     }
 
     clearLine(): void {
@@ -190,7 +192,7 @@ export class PlayField {
         this.pieces[index] = piece;
     }
 
-    put({ type, rotation, x, y }: { type: Piece, rotation: Rotation, x: number, y: number }) {
+    fill({ type, rotation, x, y }: { type: Piece, rotation: Rotation, x: number, y: number }) {
         const blocks = getBlocks(type, rotation);
         for (const block of blocks) {
             const [nx, ny] = [x + block[0], y + block[1]];
