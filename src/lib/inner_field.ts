@@ -13,13 +13,12 @@ export function createNewInnerField(): InnerField {
 
 export function createInnerField(field: Field): InnerField {
     const innerField = new InnerField({});
-    for (let y = 0; y < FieldConstants.Height; y += 1) {
+    for (let y = -1; y < FieldConstants.Height; y += 1) {
         for (let x = 0; x < FieldConstants.Width; x += 1) {
             const at = field.at(x, y);
-            innerField.setNumberFieldAt(y * FieldConstants.Width + x, parsePiece(at));
+            innerField.setNumberAt(x, y, parsePiece(at));
         }
     }
-    // TODO: set garbage
     return innerField;
 }
 
@@ -109,6 +108,10 @@ export class InnerField {
 
     setNumberGarbageAt(index: number, value: number): void {
         this.garbage.setAt(index, value);
+    }
+
+    setNumberAt(x: number, y: number, value: number): void {
+        return 0 <= y ? this.field.set(x, y, value) : this.garbage.set(x, -(y + 1), value);
     }
 
     getNumberAt(x: number, y: number): Piece {

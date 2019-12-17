@@ -5,6 +5,7 @@ import { Field } from './field';
 import { isMinoPiece, parsePiece, parseRotation, Piece, Rotation } from './defines';
 import { createActionEncoder } from './action';
 import { createCommentParser } from './comments';
+import { Quiz } from './quiz';
 
 const FieldConstants = {
     GarbageLine: 1,
@@ -17,26 +18,29 @@ export function encode(pages: Page[]): string {
 
         if (changed) {
             // フィールドを記録して、リピートを終了する
-            allValues.merge(values);
+            buffer.merge(values);
             lastRepeatIndex = -1;
-        } else if (lastRepeatIndex < 0 || allValues.get(lastRepeatIndex) === Buffer.tableLength - 1) {
+        } else if (lastRepeatIndex < 0 || buffer.get(lastRepeatIndex) === Buffer.tableLength - 1) {
             // フィールドを記録して、リピートを開始する
-            allValues.merge(values);
-            allValues.push(0);
-            lastRepeatIndex = allValues.length - 1;
-        } else if (allValues.get(lastRepeatIndex) < (Buffer.tableLength - 1)) {
+            buffer.merge(values);
+            buffer.push(0);
+            lastRepeatIndex = buffer.length - 1;
+        } else if (buffer.get(lastRepeatIndex) < (Buffer.tableLength - 1)) {
             // フィールドは記録せず、リピートを進める
-            const currentRepeatValue = allValues.get(lastRepeatIndex);
-            allValues.set(lastRepeatIndex, currentRepeatValue + 1);
+            const currentRepeatValue = buffer.get(lastRepeatIndex);
+            buffer.set(lastRepeatIndex, currentRepeatValue + 1);
         }
     };
 
     let lastRepeatIndex = -1;
-    const allValues = new Buffer();
+    const buffer = new Buffer();
     let prevField = createNewInnerField();
 
     const actionEncoder = createActionEncoder(FieldConstants.Width, 23, FieldConstants.GarbageLine);
     const commentParser = createCommentParser();
+
+    let prevComment: string | undefined = '';
+    let prevQuiz: Quiz | undefined = undefined;
 
     const innerEncode = (index: number) => {
         const currentPage = pages[index];
@@ -48,7 +52,9 @@ export function encode(pages: Page[]): string {
         updateField(prevField, currentField);
 
         // アクションの更新
-        const isComment = currentPage.comment !== undefined && (index !== 0 || currentPage.comment !== '');
+        const currentComment = currentPage.comment !== undefined
+            ? ((index !== 0 || currentPage.comment !== '') ? currentPage.comment : undefined)
+            : undefined;
         const piece = currentPage.operation !== undefined ? {
             type: parsePiece(currentPage.operation.type),
             rotation: parseRotation(currentPage.operation.rotation),
@@ -60,24 +66,70 @@ export function encode(pages: Page[]): string {
             x: 0,
             y: 22,
         };
+
+        let nextComment;
+        if (currentComment !== undefined) {
+            if (currentComment.startsWith('#Q=')) {
+                // Quiz on
+                if (prevQuiz !== undefined && prevQuiz.format().toString() === currentComment) {
+                    nextComment = undefined;
+                } else {
+                    nextComment = currentComment;
+                    prevComment = nextComment;
+                    prevQuiz = new Quiz(currentComment);
+                }
+            } else {
+                // Quiz off
+                if (prevQuiz !== undefined && prevQuiz.format().toString() === currentComment) {
+                    nextComment = undefined;
+                    prevComment = currentComment;
+                    prevQuiz = undefined;
+                } else {
+                    nextComment = prevComment !== currentComment ? currentComment : undefined;
+                    prevComment = prevComment !== currentComment ? nextComment : prevComment;
+                    prevQuiz = undefined;
+                }
+            }
+        } else {
+            nextComment = undefined;
+            prevQuiz = undefined;
+        }
+
+        if (prevQuiz !== undefined && prevQuiz.canOperate() && currentPage.flags.lock) {
+            if (isMinoPiece(piece.type)) {
+                try {
+                    const nextQuiz = prevQuiz.nextIfEnd();
+                    const operation = nextQuiz.getOperation(piece.type);
+                    prevQuiz = nextQuiz.operate(operation);
+                } catch (e) {
+                    // console.error(e.message);
+
+                    // Not operate
+                    prevQuiz = prevQuiz.format();
+                }
+            } else {
+                prevQuiz = prevQuiz.format();
+            }
+        }
+
         const action = {
             piece,
             rise: currentPage.flags.rise,
             mirror: currentPage.flags.mirror,
             colorize: currentPage.flags.colorize,
             lock: currentPage.flags.lock,
-            comment: isComment,
+            comment: nextComment !== undefined,
         };
 
         const actionNumber = actionEncoder.encode(action);
-        allValues.push(actionNumber, 3);
+        buffer.push(actionNumber, 3);
 
         // コメントの更新
-        if (currentPage.comment !== undefined && isComment) {
+        if (nextComment !== undefined) {
             const comment = escape(currentPage.comment);
             const commentLength = Math.min(comment.length, 4095);
 
-            allValues.push(commentLength, 2);
+            buffer.push(commentLength, 2);
 
             // コメントを符号化
             for (let index = 0; index < commentLength; index += 4) {
@@ -91,8 +143,10 @@ export function encode(pages: Page[]): string {
                     value += commentParser.encode(ch, count);
                 }
 
-                allValues.push(value, 5);
+                buffer.push(value, 5);
             }
+        } else if (currentPage.comment === undefined) {
+            prevComment = undefined;
         }
 
         // 地形の更新
@@ -121,7 +175,7 @@ export function encode(pages: Page[]): string {
 
     // テト譜が短いときはそのまま出力する
     // 47文字ごとに?が挿入されるが、実際は先頭にv115@が入るため、最初の?は42文字後になる
-    const data = allValues.toString();
+    const data = buffer.toString();
     if (data.length < 41) {
         return data;
     }
