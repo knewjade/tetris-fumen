@@ -1,7 +1,7 @@
-import { decoder, Pages } from '..';
+import { decoder, encoder, Pages } from '..';
 
 describe('usage', () => {
-    test('case1', () => {
+    test('decode', () => {
         const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
         const pages: Pages = decoder.decode(data);
         expect(pages.length).toEqual(7);
@@ -29,5 +29,12 @@ describe('usage', () => {
 
         field.put(page.operation);
         expect(field.at(4, 0)).toEqual('I');
+    });
+
+    test('decode -> encode', () => {
+        const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
+        const pages = decoder.decode(data);
+        const encoded: string = encoder.encode(pages);
+        expect(encoded).toEqual(data);
     });
 });

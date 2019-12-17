@@ -1,18 +1,34 @@
-import { Page } from './decoder';
 import { createInnerField, createNewInnerField, InnerField } from './inner_field';
 import { Buffer } from './buffer';
 import { Field } from './field';
-import { isMinoPiece, parsePiece, parseRotation, Piece, Rotation } from './defines';
+import { isMinoPiece, parsePiece, parseRotation, Piece, PieceType, Rotation, RotationType } from './defines';
 import { createActionEncoder } from './action';
 import { createCommentParser } from './comments';
 import { Quiz } from './quiz';
+
+export interface EncodePage {
+    comment?: string;
+    operation?: {
+        type: PieceType,
+        rotation: RotationType,
+        x: number,
+        y: number,
+    };
+    field?: Field;
+    flags?: {
+        lock?: boolean;
+        mirror?: boolean;
+        colorize?: boolean;
+        rise?: boolean;
+    };
+}
 
 const FieldConstants = {
     GarbageLine: 1,
     Width: 10,
 };
 
-export function encode(pages: Page[]): string {
+export function encode(pages: EncodePage[]): string {
     const updateField = (prev: InnerField, current: InnerField) => {
         const { changed, values } = encodeField(prev, current);
 
@@ -112,12 +128,18 @@ export function encode(pages: Page[]): string {
             }
         }
 
+        const currentFlags = {
+            lock: true,
+            colorize: index === 0,
+            ...currentPage.flags,
+        };
+
         const action = {
             piece,
-            rise: currentPage.flags.rise,
-            mirror: currentPage.flags.mirror,
-            colorize: currentPage.flags.colorize,
-            lock: currentPage.flags.lock,
+            rise: !!currentFlags.rise,
+            mirror: !!currentFlags.mirror,
+            colorize: !!currentFlags.colorize,
+            lock: !!currentFlags.lock,
             comment: nextComment !== undefined,
         };
 
