@@ -94,7 +94,6 @@ console.log(field.at(4, 0));  // 'I'
   - rise: If true, rise garbage after placement  
 * field: Field object on the page before applying operation and flags
 
-
 ### Encode
 
 Typescript
@@ -145,4 +144,48 @@ pages.push({
 
 const encoded: string = encoder.encode(pages);
 console.log(encoded);  // v115@9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB
+```
+
+### Field object
+
+Typescript
+
+```
+// Block signs
+//   TIOLJSZ => 'TIOLJSZ'
+//   Gray => 'X'
+//   Empty => '_'
+
+// Create field
+const field = Field.create(
+    'LLL_______' +
+    'LOO_______' +
+    'JOO_______' +
+    'JJJ_______',  // field
+    'XXXXXXXXX_',  // garbage
+);
+
+// Parse to string
+field.str();
+// default: field.str({ reduced: true, separator: '\n', garbage: true });
+// @param `reduced`  If true, empty line is not parsed
+// @param `separator`  Specify characters between lines 
+// @param `garbage`  If true, garbage is parsed
+
+// Check if can put piece
+field.canPut({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
+
+// Put piece
+field.put({ type: 'T', rotation: 'Left', x: 9, y: 1 });
+
+// Get block type
+field.at(9, 1);  // 'T'
+
+// Set block
+field.set(9, 0, 'O');
+field.set(9, 1, 'Gray');
+field.set(9, 2, 'Empty');
+
+// Copy field
+const copied = field.copy();
 ```

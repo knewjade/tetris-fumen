@@ -51,11 +51,38 @@ export class Field {
         return parsePieceName(this.field.getNumberAt(x, y));
     }
 
-    set(x: number, y: number, type: PieceType): void {
+    set(x: number, y: number, type: PieceType | string): void {
         this.field.setNumberAt(x, y, parsePiece(type));
     }
 
     copy(): Field {
         return new Field(this.field.copy());
+    }
+
+    str(option: { reduced?: boolean, separator?: string, garbage?: boolean } = {}): string {
+        let skip = option.reduced !== undefined ? option.reduced : true;
+        const separator = option.separator !== undefined ? option.separator : '\n';
+        const minY = option.garbage === undefined || option.garbage ? -1 : 0;
+
+        let output = '';
+
+        for (let y = 22; minY <= y; y -= 1) {
+            let line = '';
+            for (let x = 0; x < 10; x += 1) {
+                line += this.at(x, y);
+            }
+
+            if (skip && line === '__________') {
+                continue;
+            }
+
+            skip = false;
+            output += line;
+            if (y !== minY) {
+                output += separator;
+            }
+        }
+
+        return output;
     }
 }

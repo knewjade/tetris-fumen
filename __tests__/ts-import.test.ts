@@ -83,4 +83,62 @@ describe('usage', () => {
         const encoded: string = encoder.encode(pages);
         expect(encoded).toEqual('v115@9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB');
     });
+
+    test('field', () => {
+        // Block colors
+        // TIOLJSZ => 'TIOLJSZ'
+        // Gray => 'X'
+        // Empty => '_'
+        const field = Field.create(
+            'LLL_______' +
+            'LOO_______' +
+            'JOO_______' +
+            'JJJ_______',  // field
+            'XXXXXXXXX_',  // garbage
+        );
+
+        expect(field.str({ separator: '', garbage: false })).toEqual(
+            'LLL_______' +
+            'LOO_______' +
+            'JOO_______' +
+            'JJJ_______',
+        );
+
+        expect(field.str({ separator: '' })).toEqual(
+            'LLL_______' +
+            'LOO_______' +
+            'JOO_______' +
+            'JJJ_______' +
+            'XXXXXXXXX_',
+        );
+
+        field.str();
+        field.canPut({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
+
+        field.put({ type: 'T', rotation: 'Left', x: 9, y: 1 });
+
+        field.at(9, 1);  // 'T'
+
+        expect(field.str({ separator: '' })).toEqual(
+            'LLL_______' +
+            'LOO______T' +
+            'JOO_____TT' +
+            'JJJ______T' +
+            'XXXXXXXXX_',
+        );
+
+        field.set(9, 0, 'O');
+        field.set(9, 1, 'Gray');
+        field.set(9, 2, 'Empty');
+
+        const copied = field.copy();
+
+        expect(copied.str({ separator: '' })).toEqual(
+            'LLL_______' +
+            'LOO_______' +
+            'JOO_____TX' +
+            'JJJ______O' +
+            'XXXXXXXXX_',
+        );
+    });
 });

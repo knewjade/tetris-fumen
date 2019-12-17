@@ -37,7 +37,7 @@ export function parsePieceName(piece: Piece): PieceType {
     case Piece.Empty:
         return '_';
     }
-    throw new Error('Unexpected piece');
+    throw new Error(`Unknown piece: ${piece}`);
 }
 
 export function parsePiece(piece: string): Piece {
@@ -57,12 +57,14 @@ export function parsePiece(piece: string): Piece {
     case 'S':
         return Piece.S;
     case 'X':
+    case 'GRAY':
         return Piece.Gray;
     case ' ':
     case '_':
+    case 'EMPTY':
         return Piece.Empty;
     }
-    throw new Error(`Unexpected piece: ${piece}`);
+    throw new Error(`Unknown piece: ${piece}`);
 }
 
 export enum Rotation {
@@ -85,7 +87,7 @@ export function parseRotationName(rotation: Rotation): RotationType {
     case Rotation.Reverse:
         return 'Reverse';
     }
-    throw new Error('Unexpected rotation');
+    throw new Error(`Unknown rotation: ${rotation}`);
 }
 
 export function parseRotation(rotation: RotationType): Rotation {
@@ -99,7 +101,7 @@ export function parseRotation(rotation: RotationType): Rotation {
     case 'Reverse':
         return Rotation.Reverse;
     }
-    throw new Error('Unexpected rotation');
+    throw new Error(`Unknown rotation: ${rotation}`);
 }
 
 export interface Operation {
