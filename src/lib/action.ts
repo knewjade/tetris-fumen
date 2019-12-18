@@ -1,7 +1,7 @@
-import { isMinoPiece, Operation, Piece, Rotation } from './defines';
+import { isMinoPiece, InnerOperation, Piece, Rotation } from './defines';
 
 interface Action {
-    piece: Operation;
+    piece: InnerOperation;
     rise: boolean;
     mirror: boolean;
     colorize: boolean;

@@ -1,5 +1,16 @@
-import { InnerField, PlayField } from './inner_field';
+import { getBlockXYs, InnerField, PlayField } from './inner_field';
 import { parsePiece, parsePieceName, parseRotation, PieceType, RotationType } from './defines';
+
+export interface Operation {
+    type: PieceType;
+    rotation: RotationType;
+    x: number;
+    y: number;
+}
+
+function toMino(operationOrMino: Operation | Mino) {
+    return operationOrMino instanceof Mino ? operationOrMino.copy() : Mino.from(operationOrMino);
+}
 
 export class Field {
     public static create(field: string, garbage?: string): Field {
@@ -12,27 +23,16 @@ export class Field {
     constructor(private readonly field: InnerField) {
     }
 
-    canFill(operation?: {
-        type: PieceType;
-        rotation: RotationType;
-        x: number;
-        y: number;
-    }): boolean {
+    canFill(operation?: Operation | Mino): boolean {
         if (operation === undefined) {
             return true;
         }
 
-        return this.field.canFill(
-            parsePiece(operation.type), parseRotation(operation.rotation), operation.x, operation.y,
-        );
+        const mino = toMino(operation);
+        return this.field.canFillAll(mino.positions());
     }
 
-    canLock(operation?: {
-        type: PieceType;
-        rotation: RotationType;
-        x: number;
-        y: number;
-    }): boolean {
+    canLock(operation?: Operation | Mino): boolean {
         if (operation === undefined) {
             return true;
         }
@@ -45,53 +45,37 @@ export class Field {
         return !this.canFill({ ...operation, y: operation.y - 1 });
     }
 
-    fill(operation?: {
-        type: PieceType;
-        rotation: RotationType;
-        x: number;
-        y: number;
-    }): void {
+    fill(operation?: Operation | Mino): Mino | undefined {
         if (operation === undefined) {
-            return;
+            return undefined;
         }
 
-        if (!this.canLock(operation)) {
+        const mino = toMino(operation);
+
+        if (!this.canLock(mino)) {
             throw Error('Cannot fill piece on field');
         }
 
-        this.field.fill({
-            type: parsePiece(operation.type),
-            rotation: parseRotation(operation.rotation),
-            x: operation.x,
-            y: operation.y,
-        });
+        this.field.fillAll(mino.positions(), parsePiece(mino.type));
+
+        return mino;
     }
 
-    put(operation?: {
-        type: PieceType;
-        rotation: RotationType;
-        x: number;
-        y: number;
-    }): void {
+    put(operation?: Operation | Mino): Mino | undefined {
         if (operation === undefined) {
-            return;
+            return undefined;
         }
 
-        const op = { ...operation };
+        const mino = toMino(operation);
 
-        for (; 0 <= op.y; op.y -= 1) {
-            if (!this.canLock(op)) {
+        for (; 0 <= mino.y; mino.y -= 1) {
+            if (!this.canLock(mino)) {
                 continue;
             }
 
-            this.field.fill({
-                type: parsePiece(op.type),
-                rotation: parseRotation(op.rotation),
-                x: op.x,
-                y: op.y,
-            });
+            this.fill(mino);
 
-            return;
+            return mino;
         }
 
         throw Error('Cannot put piece on field');
@@ -138,5 +122,54 @@ export class Field {
         }
 
         return output;
+    }
+}
+
+export class Mino {
+    static from(operation: Operation): Mino {
+        return new Mino(operation.type, operation.rotation, operation.x, operation.y);
+    }
+
+    constructor(
+        public type: PieceType,
+        public rotation: RotationType,
+        public x: number,
+        public y: number,
+    ) {
+    }
+
+    positions(): { x: number, y: number }[] {
+        return getBlockXYs(parsePiece(this.type), parseRotation(this.rotation), this.x, this.y).sort((a, b) => {
+            if (a.y === b.y) {
+                return a.x - b.x;
+            }
+            return a.y - b.y;
+        });
+    }
+
+    operation(): Operation {
+        return {
+            type: this.type,
+            rotation: this.rotation,
+            x: this.x,
+            y: this.y,
+        };
+    }
+
+    isValid(): boolean {
+        try {
+            parsePiece(this.type);
+            parseRotation(this.rotation);
+        } catch (e) {
+            return false;
+        }
+
+        return this.positions().every(({ x, y }) => {
+            return 0 <= x && x < 10 && 0 <= y && y < 23;
+        });
+    }
+
+    copy(): Mino {
+        return new Mino(this.type, this.rotation, this.x, this.y);
     }
 }

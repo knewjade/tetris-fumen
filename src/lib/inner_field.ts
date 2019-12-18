@@ -1,4 +1,4 @@
-import { Operation, parsePiece, Piece, Rotation } from './defines';
+import { InnerOperation, parsePiece, Piece, Rotation } from './defines';
 import { Field } from './field';
 
 const FieldConstants = {
@@ -42,8 +42,12 @@ export class InnerField {
         this.garbage = garbage;
     }
 
-    fill(operation: Operation): void {
+    fill(operation: InnerOperation): void {
         this.field.fill(operation);
+    }
+
+    fillAll(positions: { x: number, y: number }[], type: Piece): void {
+        this.field.fillAll(positions, type);
     }
 
     canFill(piece: Piece, rotation: Rotation, x: number, y: number) {
@@ -52,6 +56,14 @@ export class InnerField {
             return 0 <= px && px < 10
                 && 0 <= py && py < FieldConstants.Height
                 && this.getNumberAt(px, py) === Piece.Empty;
+        });
+    }
+
+    canFillAll(positions: { x: number, y: number }[]) {
+        return positions.every(({ x, y }) => {
+            return 0 <= x && x < 10
+                && 0 <= y && y < FieldConstants.Height
+                && this.getNumberAt(x, y) === Piece.Empty;
         });
     }
 
@@ -200,6 +212,12 @@ export class PlayField {
         }
     }
 
+    fillAll(positions: { x: number, y: number }[], type: Piece) {
+        for (const { x, y } of positions) {
+            this.set(x, y, type);
+        }
+    }
+
     clearLine() {
         let newField = this.pieces.concat();
         const top = this.pieces.length / FieldConstants.Width - 1;
@@ -301,6 +319,12 @@ export function getBlockPositions(piece: Piece, rotation: Rotation, x: number, y
         position[0] += x;
         position[1] += y;
         return position;
+    });
+}
+
+export function getBlockXYs(piece: Piece, rotation: Rotation, x: number, y: number): { x: number, y: number }[] {
+    return getBlocks(piece, rotation).map((position) => {
+        return { x: position[0] + x, y: position[1] + y };
     });
 }
 

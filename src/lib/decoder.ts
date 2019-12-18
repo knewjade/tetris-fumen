@@ -1,36 +1,23 @@
 import { createInnerField, createNewInnerField, InnerField } from './inner_field';
 import { Buffer } from './buffer';
-import {
-    isMinoPiece,
-    Operation,
-    parsePiece,
-    parsePieceName,
-    parseRotation,
-    parseRotationName,
-    Piece,
-    PieceType,
-    Rotation,
-    RotationType,
-} from './defines';
+import { isMinoPiece, parsePieceName, parseRotationName, Piece, Rotation } from './defines';
 import { createActionDecoder } from './action';
 import { createCommentParser } from './comments';
 import { Quiz } from './quiz';
-import { Field } from './field';
+import { Field, Mino, Operation } from './field';
 
 export class Page {
     private _field: InnerField;
-    private _operation: Operation | undefined;
 
     constructor(
         public index: number,
         field: InnerField,
-        operation: Operation | undefined,
+        public operation: Operation | undefined,
         public comment: string,
         public flags: { lock: boolean; mirror: boolean; colorize: boolean; rise: boolean; quiz: boolean },
         public refs: { field?: number; comment?: number },
     ) {
         this._field = field.copy();
-        this._operation = operation;
     }
 
     get field(): Field {
@@ -41,40 +28,8 @@ export class Page {
         this._field = createInnerField(field);
     }
 
-    get operation(): {
-        type: PieceType,
-        rotation: RotationType,
-        x: number,
-        y: number,
-    } | undefined {
-        if (this._operation === undefined) {
-            return undefined;
-        }
-        return {
-            type: parsePieceName(this._operation.type),
-            rotation: parseRotationName(this._operation.rotation),
-            x: this._operation.x,
-            y: this._operation.y,
-        };
-    }
-
-    set operation(operation: {
-        type: PieceType,
-        rotation: RotationType,
-        x: number,
-        y: number,
-    } | undefined) {
-        if (operation === undefined) {
-            this._operation = undefined;
-            return;
-        }
-
-        this._operation = {
-            type: parsePiece(operation.type),
-            rotation: parseRotation(operation.rotation),
-            x: operation.x,
-            y: operation.y,
-        };
+    mino(): Mino {
+        return Mino.from(this.operation);
     }
 }
 
@@ -304,7 +259,12 @@ function innerDecode(data: string, fieldTop: number): Pages {
         pages.push(new Page(
             pageIndex,
             currentFieldObj.field,
-            currentPiece,
+            currentPiece !== undefined ? Mino.from({
+                type: parsePieceName(currentPiece.type),
+                rotation: parseRotationName(currentPiece.rotation),
+                x: currentPiece.x,
+                y: currentPiece.y,
+            }) : undefined,
             comment.text !== undefined ? comment.text : store.lastCommentText,
             {
                 quiz,

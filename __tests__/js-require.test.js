@@ -77,6 +77,13 @@ describe('js-require', () => {
 
         field.put(page.operation);  // field object is mutable
         expect(field.at(4, 0)).toEqual('I');
+
+        const mino = page.mino();
+        expect(mino.operation()).toEqual(page.operation);
+        expect(mino.positions()).toEqual([{ x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }]);
+        expect(mino.isValid()).toEqual(true);
+        mino.x = 0;  // Out of the field
+        expect(mino.isValid()).toEqual(false);
     });
 
     test('Example: case4', () => {
@@ -113,8 +120,9 @@ describe('js-require', () => {
         expect(field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 0 })).toEqual(true);
         expect(field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 1 })).toEqual(false);
 
-        const afterOperation = field.put({ type: 'O', rotation: 'spawn', x: 4, y: 10 });
-        expect(afterOperation).toEqual({ type: 'O', rotation: 'spawn', x: 4, y: 0 });
+        const afterMino = field.put({ type: 'O', rotation: 'spawn', x: 4, y: 10 });
+        expect(afterMino).toEqual({ type: 'O', rotation: 'spawn', x: 4, y: 0 });
+        expect(afterMino.operation()).toEqual({ type: 'O', rotation: 'spawn', x: 4, y: 0 });
 
         const field2 = Field.create(
             '              _________I' +

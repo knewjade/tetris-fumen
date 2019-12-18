@@ -1,19 +1,14 @@
 import { createInnerField, createNewInnerField, InnerField } from './inner_field';
 import { Buffer } from './buffer';
-import { Field } from './field';
-import { isMinoPiece, parsePiece, parseRotation, Piece, PieceType, Rotation, RotationType } from './defines';
+import { Field, Operation } from './field';
+import { isMinoPiece, parsePiece, parseRotation, Piece, Rotation } from './defines';
 import { createActionEncoder } from './action';
 import { createCommentParser } from './comments';
 import { Quiz } from './quiz';
 
 export interface EncodePage {
     comment?: string;
-    operation?: {
-        type: PieceType,
-        rotation: RotationType,
-        x: number,
-        y: number,
-    };
+    operation?: Operation;
     field?: Field;
     flags?: {
         lock?: boolean;

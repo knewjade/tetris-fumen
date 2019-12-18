@@ -14,10 +14,10 @@ enum Piece {
 }
 
 export enum Rotation {
-    Spawn = 'Spawn',
-    Right = 'Right',
-    Reverse = 'Reverse',
-    Left = 'Left',
+    Spawn = 'spawn',
+    Right = 'right',
+    Reverse = 'reverse',
+    Left = 'left',
 }
 
 function to(field: InnerField) {

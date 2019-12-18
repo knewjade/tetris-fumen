@@ -104,7 +104,7 @@ export function parseRotation(rotation: RotationType): Rotation {
     throw new Error(`Unknown rotation: ${rotation}`);
 }
 
-export interface Operation {
+export interface InnerOperation {
     type: Piece;
     rotation: Rotation;
     x: number;

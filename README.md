@@ -243,6 +243,16 @@ console.log(field.at(4, 0));  // '_'  // EMPTY
 
 field.put(page.operation);  // field object is mutable
 console.log(field.at(4, 0));  // 'I'
+
+/* mino: Same as `operation`, but have a more flexible operators */
+const mino = page.mino();
+console.log(mino.type, mino.rotation, mino.x, mino.y);  // I spawn 4 0
+console.log(mino.operation());  // == page.operation
+console.log(mino.positions());  // [{ x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }]
+                                // the position of the blocks
+console.log(mino.isValid());  // true  // Whether it's correct as mino
+mino.x = -1;
+console.log(mino.isValid());  // false
 ```
 
 
@@ -280,7 +290,7 @@ field.set(9, -1, '_');  // same as 'EMPTY'
 /* Check if can fill piece */
 field.canFill({ type: 'I', rotation: 'left', x: 9, y: 3 });  // true
 
-/* Fill piece even if not on the ground, and return the position of the filled operation */
+/* Fill piece even if not on the ground, and return the mino as the placed */
 field.fill({ type: 'I', rotation: 'left', x: 9, y: 3 });
 
 
@@ -288,7 +298,7 @@ field.fill({ type: 'I', rotation: 'left', x: 9, y: 3 });
 field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 0 });  // true
 field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 1 });  // false
 
-/* Harddrop and fill piece to the ground, and return the position of the filled operation */
+/* Harddrop and fill piece to the ground, and return the mino as the placed */
 field.put({ type: 'O', rotation: 'spawn', x: 4, y: 10 });  // return `{ type: 'O', rotation: 'spawn', x: 4, y: 0 }`
 
 /* Convert to string 

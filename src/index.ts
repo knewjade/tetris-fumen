@@ -7,7 +7,7 @@ export type Pages = _Pages;
 export type EncodePage = _EncodePage;
 export type EncodePages = _EncodePages;
 
-export { Field } from './lib/field';
+export { Field, Mino } from './lib/field';
 
 export const decoder = {
     decode: (data: string): Pages => {
