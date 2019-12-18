@@ -2,7 +2,6 @@
 
 `tetris-fumen` is a parser library to encode/decode tetris game state. Data compatible with [fumen](https://harddrop.com/fumen/), [連続テト譜エディタ](http://fumen.zui.jp/) can be created and manipulated.
 
-
 ## Features
 
 * Tetris game state can be packed into a string and easily unpacked
@@ -10,11 +9,9 @@
 * Decoder supports v115 and v110
 * Encoder supports v115 only
 
-
 ## Installation
 
 `npm install tetris-fumen`
-
 
 ## Specifications
 
@@ -57,8 +54,7 @@ The rotation states of mino is represented by below strings:
 
 The position of mino is represented by (x, y); See [harddrop's article SRS/How Guideline SRS Really Works](https://harddrop.com/wiki/SRS#How_Guideline_SRS_Really_Works) for details
 
-
-## Getting started
+## Getting Started
 
 ### 1. Decode 
 
@@ -93,7 +89,6 @@ console.log(pages.length);  // 7
 console.log(pages[0].comment);  // 'Opening'
 console.log(pages[0].operation);  // { type: 'I', rotation: 'spawn', x: 4, y: 0 }
 ```
-
 
 ### 2.1. Update decoded fumen 
 
@@ -214,8 +209,9 @@ pages.push({
 console.log(encoder.encode(pages));  // v115@9gilGeglRpGeg...../~/.....ciNEyoAVB
 ```
 
-
 ### 3. Page details
+
+**Javascript**
 
 ```js
 const { decoder } = require('tetris-fumen');
@@ -257,8 +253,9 @@ mino.x = -1;
 console.log(mino.isValid());  // false
 ```
 
-
 ### 4. Field details
+
+**Javascript**
 
 ```js
 /* Create field */
