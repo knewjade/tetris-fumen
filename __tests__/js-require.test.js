@@ -1,8 +1,17 @@
-let { decoder, encoder, Field } = require('..');
+const { decoder, encoder, Field } = require('..');
 
 describe('js-require', () => {
     test('Example: case1', () => {
         const data = "v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA";
+        const pages = decoder.decode(data);
+
+        expect(pages.length).toEqual(7);
+        expect(pages[0].comment).toEqual('Opening');
+        expect(pages[0].operation).toEqual({ type: 'I', rotation: 'spawn', x: 4, y: 0 });
+    });
+
+    test('Example: case1 (URL)', () => {
+        const data = 'https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
         const pages = decoder.decode(data);
 
         expect(pages.length).toEqual(7);

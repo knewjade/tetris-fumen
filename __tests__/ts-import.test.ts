@@ -10,6 +10,15 @@ describe('ts-import', () => {
         expect(pages[0].operation).toEqual({ type: 'I', rotation: 'spawn', x: 4, y: 0 });
     });
 
+    test('Example: case1 (URL)', () => {
+        const data = 'https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
+        const pages: Page[] = decoder.decode(data);
+
+        expect(pages.length).toEqual(7);
+        expect(pages[0].comment).toEqual('Opening');
+        expect(pages[0].operation).toEqual({ type: 'I', rotation: 'spawn', x: 4, y: 0 });
+    });
+
     test('Example: case2.1', () => {
         const pages = decoder.decode('v115@9gI8AeI8AeI8AeI8KeAgH');
         pages[0].comment = '4 Lines';
@@ -139,5 +148,30 @@ describe('ts-import', () => {
         expect(copied.str()).toEqual(field.str());
         copied.set(0, 0, 'T');
         expect(copied.str()).not.toEqual(field.str());
+    });
+
+    test('Fill the operation myself', () => {
+        const data = 'https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
+        const pages = decoder.decode(data);
+        const page = pages[3];
+        const field = page.field;
+
+        expect(field.str({ separator: '' })).toEqual(
+            'L__ZZ_____' +
+            'L___ZZ____' +
+            'LL_IIII___' +
+            '__________',
+        );
+
+        for (const { x, y } of page.mino().positions()) {
+            field.set(x, y, page.mino().type);
+        }
+
+        expect(field.str({ separator: '' })).toEqual(
+            'L__ZZ_S___' +
+            'L___ZZSS__' +
+            'LL_IIIIS__' +
+            '__________',
+        );
     });
 });
