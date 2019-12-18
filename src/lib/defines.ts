@@ -74,31 +74,31 @@ export enum Rotation {
     Left = 3,
 }
 
-export type RotationType = 'Spawn' | 'Right' | 'Reverse' | 'Left';
+export type RotationType = 'spawn' | 'right' | 'reverse' | 'left';
 
 export function parseRotationName(rotation: Rotation): RotationType {
     switch (rotation) {
     case Rotation.Spawn:
-        return 'Spawn';
+        return 'spawn';
     case Rotation.Left:
-        return 'Left';
+        return 'left';
     case Rotation.Right:
-        return 'Right';
+        return 'right';
     case Rotation.Reverse:
-        return 'Reverse';
+        return 'reverse';
     }
     throw new Error(`Unknown rotation: ${rotation}`);
 }
 
 export function parseRotation(rotation: RotationType): Rotation {
-    switch (rotation) {
-    case 'Spawn':
+    switch (rotation.toLowerCase()) {
+    case 'spawn':
         return Rotation.Spawn;
-    case 'Left':
+    case 'left':
         return Rotation.Left;
-    case 'Right':
+    case 'right':
         return Rotation.Right;
-    case 'Reverse':
+    case 'reverse':
         return Rotation.Reverse;
     }
     throw new Error(`Unknown rotation: ${rotation}`);

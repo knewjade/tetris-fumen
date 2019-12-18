@@ -45,15 +45,15 @@ Field have 10x23 play area and 1 garbage line.
 The type of mino is represented by below strings:
 
   * 'T', 'I', 'O', 'L', 'J', 'S', 'Z'
-  * Gray => 'X' or 'Gray' 
-  * Empty => '_' or 'Empty'
+  * Gray => 'X' or 'GRAY' 
+  * Empty => '_' or 'EMPTY'
 
 The rotation states of mino is represented by below strings:
 
-  * No rotate => 'Spawn'
-  * Clockwise => 'Right'
-  * Counter Clockwise => 'Left'
-  * 180 rotation => 'Reverse'
+  * No rotate => 'spawn'
+  * Clockwise => 'right'
+  * Counter Clockwise => 'left'
+  * 180 rotation => 'reverse'
 
 The position of mino is represented by (x, y); See [harddrop's article SRS/How Guideline SRS Really Works](https://harddrop.com/wiki/SRS#How_Guideline_SRS_Really_Works) for details
 
@@ -75,7 +75,7 @@ const pages = decoder.decode(data);
 console.log(pages.length);  // 7
 
 console.log(pages[0].comment);  // 'Opening'
-console.log(pages[0].operation);  // { type: 'I', rotation: 'Spawn', x: 4, y: 0 }
+console.log(pages[0].operation);  // { type: 'I', rotation: 'spawn', x: 4, y: 0 }
 ```
 
 **Typescript**
@@ -89,7 +89,7 @@ const pages: Page[] = decoder.decode(data);
 console.log(pages.length);  // 7
 
 console.log(pages[0].comment);  // 'Opening'
-console.log(pages[0].operation);  // { type: 'I', rotation: 'Spawn', x: 4, y: 0 }
+console.log(pages[0].operation);  // { type: 'I', rotation: 'spawn', x: 4, y: 0 }
 ```
 
 
@@ -105,7 +105,7 @@ const { decoder, encoder } = require('tetris-fumen');
 
 const pages = decoder.decode('v115@9gI8AeI8AeI8AeI8KeAgH');
 pages[0].comment = '4 Lines';
-pages[0].operation = { type: 'I', rotation: 'Left', x: 9, y: 1 };
+pages[0].operation = { type: 'I', rotation: 'left', x: 9, y: 1 };
 
 console.log(encoder.encode(pages));  // v115@9gI8AeI8AeI8AeI8Ke5IYJA0no2AMOprDTBAAA
 ```
@@ -133,19 +133,19 @@ pages.push({
 
 pages.push({
     operation: {
-        type: 'T', rotation: 'Left', x: 9, y: 1,
+        type: 'T', rotation: 'left', x: 9, y: 1,
     },
 });
 
 pages.push({
     operation: {
-        type: 'Z', rotation: 'Spawn', x: 7, y: 0,
+        type: 'Z', rotation: 'spawn', x: 7, y: 0,
     },
 });
 
 pages.push({
     operation: {
-        type: 'S', rotation: 'Spawn', x: 8, y: 2,
+        type: 'S', rotation: 'spawn', x: 8, y: 2,
     },
 });
 
@@ -182,19 +182,19 @@ pages.push({
 
 pages.push({
     operation: {
-        type: 'T', rotation: 'Left', x: 9, y: 1,
+        type: 'T', rotation: 'left', x: 9, y: 1,
     },
 });
 
 pages.push({
     operation: {
-        type: 'Z', rotation: 'Spawn', x: 7, y: 0,
+        type: 'Z', rotation: 'spawn', x: 7, y: 0,
     },
 });
 
 pages.push({
     operation: {
-        type: 'S', rotation: 'Spawn', x: 8, y: 2,
+        type: 'S', rotation: 'spawn', x: 8, y: 2,
     },
 });
 
@@ -227,7 +227,7 @@ console.log(page.index);  // 0
 console.log(page.comment);  // 'Opening'
 
 /* operation: Placed mino states */
-console.log(page.operation);  // { type: 'I', rotation: 'Spawn', x: 4, y: 0 }
+console.log(page.operation);  // { type: 'I', rotation: 'spawn', x: 4, y: 0 }
 
 /* flags: Fumen options on the page
      - colorize: If true, apply guideline color to block
@@ -239,7 +239,7 @@ console.log(page.flags);// { colorize: true, lock: true, mirror: false, quiz: fa
 
 /* field: Field object on the page before applying operation and flags */
 const field = page.field;
-console.log(field.at(4, 0));  // '_'  // Empty
+console.log(field.at(4, 0));  // '_'  // EMPTY
 
 field.put(page.operation);  // field object is mutable
 console.log(field.at(4, 0));  // 'I'
@@ -263,11 +263,11 @@ field.at(9, 0);  // '_'
 
 /* Set block */
 field.set(9, 0, 'O');
-field.set(9, 1, 'Gray');
-field.set(9, 2, 'Empty');
+field.set(9, 1, 'GRAY');
+field.set(9, 2, 'EMPTY');
 
-field.set(0, -1, 'X');  // same as 'Gray'
-field.set(9, -1, '_');  // same as 'Empty'
+field.set(0, -1, 'X');  // same as 'GRAY'
+field.set(9, -1, '_');  // same as 'EMPTY'
 
 /** Current:
       LLL_______
@@ -278,22 +278,22 @@ field.set(9, -1, '_');  // same as 'Empty'
  */
 
 /* Check if can fill piece */
-field.canFill({ type: 'I', rotation: 'Left', x: 9, y: 3 });  // true
+field.canFill({ type: 'I', rotation: 'left', x: 9, y: 3 });  // true
 
-/* Fill piece even if not on the ground */
-field.fill({ type: 'I', rotation: 'Left', x: 9, y: 3 });
+/* Fill piece even if not on the ground, and return the position of the filled operation */
+field.fill({ type: 'I', rotation: 'left', x: 9, y: 3 });
 
 
 /* Check if can fill and lock piece on the ground */
-field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 0 });  // true
-field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 1 });  // false
+field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 0 });  // true
+field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 1 });  // false
 
-/* Harddrop and fill piece to the ground */
-field.put({ type: 'O', rotation: 'Spawn', x: 4, y: 10 });
+/* Harddrop and fill piece to the ground, and return the position of the filled operation */
+field.put({ type: 'O', rotation: 'spawn', x: 4, y: 10 });  // return `{ type: 'O', rotation: 'spawn', x: 4, y: 0 }`
 
 /* Convert to string 
                         default
-     @param `reduced`   true    If true, empty line is not parsed
+     @param `reduced`   true    If true, EMPTY line is not parsed
      @param `separator` '\n'    Specify characters between lines 
      @param `garbage`   true    If true, garbage is parsed */
 console.log(field.str());

@@ -7,13 +7,13 @@ describe('js-require', () => {
 
         expect(pages.length).toEqual(7);
         expect(pages[0].comment).toEqual('Opening');
-        expect(pages[0].operation).toEqual({ type: 'I', rotation: 'Spawn', x: 4, y: 0 });
+        expect(pages[0].operation).toEqual({ type: 'I', rotation: 'spawn', x: 4, y: 0 });
     });
 
     test('Example: case2.1', () => {
         const pages = decoder.decode('v115@9gI8AeI8AeI8AeI8KeAgH');
         pages[0].comment = '4 Lines';
-        pages[0].operation = { type: 'I', rotation: 'Left', x: 9, y: 1 };
+        pages[0].operation = { type: 'I', rotation: 'left', x: 9, y: 1 };
 
         expect(encoder.encode(pages)).toEqual('v115@9gI8AeI8AeI8AeI8Ke5IYJA0no2AMOprDTBAAA');
     });
@@ -33,19 +33,19 @@ describe('js-require', () => {
 
         pages.push({
             operation: {
-                type: 'T', rotation: 'Left', x: 9, y: 1,
+                type: 'T', rotation: 'left', x: 9, y: 1,
             },
         });
 
         pages.push({
             operation: {
-                type: 'Z', rotation: 'Spawn', x: 7, y: 0,
+                type: 'Z', rotation: 'spawn', x: 7, y: 0,
             },
         });
 
         pages.push({
             operation: {
-                type: 'S', rotation: 'Spawn', x: 8, y: 2,
+                type: 'S', rotation: 'spawn', x: 8, y: 2,
             },
         });
 
@@ -69,7 +69,7 @@ describe('js-require', () => {
 
         expect(page.index).toEqual(0);
         expect(page.comment).toEqual('Opening');
-        expect(page.operation).toEqual({ type: 'I', rotation: 'Spawn', x: 4, y: 0 });
+        expect(page.operation).toEqual({ type: 'I', rotation: 'spawn', x: 4, y: 0 });
         expect(page.flags).toEqual({ colorize: true, lock: true, mirror: false, quiz: false, rise: false });
 
         const field = page.field;
@@ -91,8 +91,8 @@ describe('js-require', () => {
         expect(field.at(9, 0)).toEqual('_');
 
         field.set(9, 0, 'O');
-        field.set(9, 1, 'Gray');
-        field.set(9, 2, 'Empty');
+        field.set(9, 1, 'GRAY');
+        field.set(9, 2, 'EMPTY');
 
         field.set(0, -1, 'X');
         field.set(9, -1, '_');
@@ -106,14 +106,15 @@ describe('js-require', () => {
         );
         expect(field.str()).toEqual(field1.str());
 
-        expect(field.canFill({ type: 'I', rotation: 'Left', x: 9, y: 3 })).toEqual(true);
+        expect(field.canFill({ type: 'I', rotation: 'left', x: 9, y: 3 })).toEqual(true);
 
-        field.fill({ type: 'I', rotation: 'Left', x: 9, y: 3 });
+        field.fill({ type: 'I', rotation: 'left', x: 9, y: 3 });
 
-        expect(field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 0 })).toEqual(true);
-        expect(field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 1 })).toEqual(false);
+        expect(field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 0 })).toEqual(true);
+        expect(field.canLock({ type: 'O', rotation: 'spawn', x: 4, y: 1 })).toEqual(false);
 
-        field.put({ type: 'O', rotation: 'Spawn', x: 4, y: 10 });
+        const afterOperation = field.put({ type: 'O', rotation: 'spawn', x: 4, y: 10 });
+        expect(afterOperation).toEqual({ type: 'O', rotation: 'spawn', x: 4, y: 0 });
 
         const field2 = Field.create(
             '              _________I' +
