@@ -66,12 +66,14 @@ export class Page {
     } | undefined) {
         if (operation === undefined) {
             this._operation = undefined;
+            return;
         }
+
         this._operation = {
             type: parsePiece(operation.type),
             rotation: parseRotation(operation.rotation),
-            x: this._operation.x,
-            y: this._operation.y,
+            x: operation.x,
+            y: operation.y,
         };
     }
 }
