@@ -96,18 +96,18 @@ console.log(pages[0].operation);  // { type: 'I', rotation: 'Spawn', x: 4, y: 0 
 ### 2.1. Update decoded fumen 
 
 [Loading data in the code below](https://harddrop.com/fumen/?v115@9gI8AeI8AeI8AeI8KeAgH)
-[Generated data by the code below]()
+[Generated data by the code below](https://harddrop.com/fumen/?v115@9gI8AeI8AeI8AeI8Ke5IYJA0no2AMOprDTBAAA)
 
 **Javascript**
 
 ```js
 const { decoder, encoder } = require('tetris-fumen');
 
-let pages = decoder.decode('v115@9gI8AeI8AeI8AeI8KeAgH');
+const pages = decoder.decode('v115@9gI8AeI8AeI8AeI8KeAgH');
 pages[0].comment = '4 Lines';
 pages[0].operation = { type: 'I', rotation: 'Left', x: 9, y: 1 };
 
-console.log(encoder.encode(pages));  // v115@
+console.log(encoder.encode(pages));  // v115@9gI8AeI8AeI8AeI8Ke5IYJA0no2AMOprDTBAAA
 ```
 
 ### 2.2. Create from scratch
@@ -117,7 +117,7 @@ console.log(encoder.encode(pages));  // v115@
 **Javascript**
 
 ```js
-const { encoder } = require('tetris-fumen');
+const { encoder, Field } = require('tetris-fumen');
 
 const pages = [];
 pages.push({
@@ -166,7 +166,7 @@ console.log(encoder.encode(pages));  // v115@9gilGeglRpGeg...../~/.....ciNEyoAVB
 **Typescript**
 
 ```ts
-import { encoder, EncodePage } from 'tetris-fumen';
+import { encoder, EncodePage, Field } from 'tetris-fumen';
 
 const pages: EncodePage[] = [];
 pages.push({
@@ -235,11 +235,11 @@ console.log(page.operation);  // { type: 'I', rotation: 'Spawn', x: 4, y: 0 }
      - mirror: If true, flip field horizontally after placement
      - quiz: If true, comment is in quiz format
      - rise: If true, rise garbage after placement */  
-console.log(page.flags);// {  colorize: true, lock: true, mirror: false, quiz: false, rise: false }
+console.log(page.flags);// { colorize: true, lock: true, mirror: false, quiz: false, rise: false }
 
 /* field: Field object on the page before applying operation and flags */
 const field = page.field;
-console.log(field.at(4, 0));  // '_'  // empty
+console.log(field.at(4, 0));  // '_'  // Empty
 
 field.put(page.operation);  // field object is mutable
 console.log(field.at(4, 0));  // 'I'
@@ -259,30 +259,37 @@ const field = Field.create(
 );
 
 /* Get block type */
-field.at(9, 0);  // 'O'
+field.at(9, 0);  // '_'
 
 /* Set block */
-field.set(9, 2, 'O');
-field.set(9, 3, 'Gray');
-field.set(9, 4, 'Empty');
+field.set(9, 0, 'O');
+field.set(9, 1, 'Gray');
+field.set(9, 2, 'Empty');
 
 field.set(0, -1, 'X');  // same as 'Gray'
 field.set(9, -1, '_');  // same as 'Empty'
 
+/** Current:
+      LLL_______
+      LOO_______
+      JOO______X
+      JJJ______O
+      XXXXXXXXX_
+ */
+
 /* Check if can fill piece */
-field.canFill({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
+field.canFill({ type: 'I', rotation: 'Left', x: 9, y: 3 });  // true
 
 /* Fill piece even if not on the ground */
-field.fill({ type: 'O', rotation: 'Spawn', x: 8, y: 0 });
+field.fill({ type: 'I', rotation: 'Left', x: 9, y: 3 });
 
 
 /* Check if can fill and lock piece on the ground */
-field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 1 });  // true
-field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 2 });  // false
+field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 0 });  // true
+field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 1 });  // false
 
 /* Harddrop and fill piece to the ground */
-field.put({ type: 'T', rotation: 'Left', x: 9, y: 10 });
-
+field.put({ type: 'O', rotation: 'Spawn', x: 4, y: 10 });
 
 /* Convert to string 
                         default
@@ -291,10 +298,19 @@ field.put({ type: 'T', rotation: 'Left', x: 9, y: 10 });
      @param `garbage`   true    If true, garbage is parsed */
 console.log(field.str());
 
+/** Current:
+      _________I
+      _________I
+      LLL______I
+      LOO______I
+      JOO_OO___X
+      JJJ_OO___O
+      XXXXXXXXX_
+ */
 
 // Copy field
 const copied = field.copy();
 console.log(copied.str() === field.str());  // true
-copied.set(0, 0, 'I');
+copied.set(0, 0, 'T');
 console.log(copied.str() === field.str());  // false
 ```
