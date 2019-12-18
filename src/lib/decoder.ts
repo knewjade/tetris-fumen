@@ -1,9 +1,11 @@
-import { createNewInnerField, InnerField } from './inner_field';
+import { createInnerField, createNewInnerField, InnerField } from './inner_field';
 import { Buffer } from './buffer';
 import {
     isMinoPiece,
     Operation,
+    parsePiece,
     parsePieceName,
+    parseRotation,
     parseRotationName,
     Piece,
     PieceType,
@@ -16,16 +18,16 @@ import { Quiz } from './quiz';
 import { Field } from './field';
 
 export class Page {
-    private readonly _field: InnerField;
-    private readonly _operation: Operation | undefined;
+    private _field: InnerField;
+    private _operation: Operation | undefined;
 
     constructor(
-        public readonly index: number,
+        public index: number,
         field: InnerField,
         operation: Operation | undefined,
-        public readonly comment: string,
-        public readonly flags: { lock: boolean; mirror: boolean; colorize: boolean; rise: boolean; quiz: boolean },
-        public readonly refs: { field?: number; comment?: number },
+        public comment: string,
+        public flags: { lock: boolean; mirror: boolean; colorize: boolean; rise: boolean; quiz: boolean },
+        public refs: { field?: number; comment?: number },
     ) {
         this._field = field.copy();
         this._operation = operation;
@@ -33,6 +35,10 @@ export class Page {
 
     get field(): Field {
         return new Field(this._field.copy());
+    }
+
+    set field(field: Field) {
+        this._field = createInnerField(field);
     }
 
     get operation(): {
@@ -47,6 +53,23 @@ export class Page {
         return {
             type: parsePieceName(this._operation.type),
             rotation: parseRotationName(this._operation.rotation),
+            x: this._operation.x,
+            y: this._operation.y,
+        };
+    }
+
+    set operation(operation: {
+        type: PieceType,
+        rotation: RotationType,
+        x: number,
+        y: number,
+    } | undefined) {
+        if (operation === undefined) {
+            this._operation = undefined;
+        }
+        this._operation = {
+            type: parsePiece(operation.type),
+            rotation: parseRotation(operation.rotation),
             x: this._operation.x,
             y: this._operation.y,
         };
