@@ -70,6 +70,7 @@ The position of mino is represented by (x, y); See [harddrop's article SRS/How G
 const { decoder } = require('tetris-fumen');
 
 const data = "v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA";
+// const data = "https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA";  // Allow URL format
 const pages = decoder.decode(data);
 
 console.log(pages.length);  // 7
@@ -84,6 +85,7 @@ console.log(pages[0].operation);  // { type: 'I', rotation: 'spawn', x: 4, y: 0 
 import { decoder, Page } from 'tetris-fumen';
 
 const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
+// const data = "https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA";  // Allow URL format
 const pages: Page[] = decoder.decode(data);
 
 console.log(pages.length);  // 7
