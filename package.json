@@ -23,7 +23,7 @@
     "clean": "rm -rf lib/ && rm -f index.js index.d.ts",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "build": "npm run clean && tsc",
-    "publish": "npm run build && npm publish"
+    "publish:npm": "npm run build && npm publish"
   },
   "devDependencies": {
     "jest": "^24.9.0",
