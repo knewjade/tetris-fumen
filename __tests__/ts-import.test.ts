@@ -1,45 +1,25 @@
-import { decoder, EncodePages, encoder, Field, Pages } from '..';
+import { decoder, EncodePage, encoder, Field, Page } from '..';
 
 describe('ts-import', () => {
-    test('decode', () => {
+    test('Example: case1', () => {
         const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
-        const pages: Pages = decoder.decode(data);
+        const pages: Page[] = decoder.decode(data);
+
         expect(pages.length).toEqual(7);
-
-        const page = pages[0];
-        expect(page.index).toEqual(0);
-        expect(page.comment).toEqual('Opening');
-        expect(page.flags).toEqual({
-            colorize: true,
-            lock: true,
-            mirror: false,
-            quiz: false,
-            rise: false,
-        });
-        expect(page.operation).toEqual({
-            type: 'I',
-            rotation: 'Spawn',
-            x: 4,
-            y: 0,
-        });
-        expect(page.refs).toEqual({});
-
-        const field = page.field;
-        expect(field.at(4, 0)).toEqual('_');
-
-        field.put(page.operation);
-        expect(field.at(4, 0)).toEqual('I');
+        expect(pages[0].comment).toEqual('Opening');
+        expect(pages[0].operation).toEqual({ type: 'I', rotation: 'Spawn', x: 4, y: 0 });
     });
 
-    test('decode -> encode', () => {
-        const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
-        const pages = decoder.decode(data);
-        const encoded: string = encoder.encode(pages);
-        expect(encoded).toEqual(data);
+    test('Example: case2.1', () => {
+        const pages = decoder.decode('v115@9gI8AeI8AeI8AeI8KeAgH');
+        pages[0].comment = '4 Lines';
+        pages[0].operation = { type: 'I', rotation: 'Left', x: 9, y: 1 };
+
+        expect(encoder.encode(pages)).toEqual('v115@9gI8AeI8AeI8AeI8Ke5IYJA0no2AMOprDTBAAA');
     });
 
-    test('encode', () => {
-        const pages: EncodePages = [];
+    test('Example: case2.2', () => {
+        const pages: EncodePage[] = [];
         pages.push({
             field: Field.create(
                 'LLL_______' +
@@ -80,78 +60,75 @@ describe('ts-import', () => {
             comment: '(Mirror)',
         });
 
-        const encoded: string = encoder.encode(pages);
-        expect(encoded).toEqual('v115@9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB');
+        expect(encoder.encode(pages)).toEqual('v115@9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB');
     });
 
-    test('field', () => {
-        // Block colors
-        // TIOLJSZ => 'TIOLJSZ'
-        // Gray => 'X'
-        // Empty => '_'
+    test('Example: case3', () => {
+        const pages = decoder.decode('v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA');
+        const page = pages[0];
+
+        expect(page.index).toEqual(0);
+        expect(page.comment).toEqual('Opening');
+        expect(page.operation).toEqual({ type: 'I', rotation: 'Spawn', x: 4, y: 0 });
+        expect(page.flags).toEqual({ colorize: true, lock: true, mirror: false, quiz: false, rise: false });
+
+        const field = page.field;
+        expect(field.at(4, 0)).toEqual('_');
+
+        field.put(page.operation);  // field object is mutable
+        expect(field.at(4, 0)).toEqual('I');
+    });
+
+    test('Example: case4', () => {
         const field = Field.create(
             'LLL_______' +
             'LOO_______' +
             'JOO_______' +
-            'JJJ_______',  // field
-            'XXXXXXXXX_',  // garbage
-        );
-
-        expect(field.str({ separator: '', garbage: false })).toEqual(
-            'LLL_______' +
-            'LOO_______' +
-            'JOO_______' +
             'JJJ_______',
-        );
-
-        expect(field.str({ separator: '' })).toEqual(
-            'LLL_______' +
-            'LOO_______' +
-            'JOO_______' +
-            'JJJ_______' +
             'XXXXXXXXX_',
         );
 
-        expect(field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 1 })).toBeTruthy();
-        expect(field.canLock({ type: 'T', rotation: 'Left', x: 9, y: 2 })).toBeFalsy();
-
-        expect(field.canFill({ type: 'T', rotation: 'Left', x: 9, y: 1 })).toBeTruthy();
-        expect(field.canFill({ type: 'T', rotation: 'Left', x: 9, y: 2 })).toBeTruthy();
-
-        field.fill({ type: 'T', rotation: 'Left', x: 9, y: 1 });
-
-        expect(field.at(9, 1)).toEqual('T');
-
-        expect(field.str({ separator: '' })).toEqual(
-            'LLL_______' +
-            'LOO______T' +
-            'JOO_____TT' +
-            'JJJ______T' +
-            'XXXXXXXXX_',
-        );
+        expect(field.at(9, 0)).toEqual('_');
 
         field.set(9, 0, 'O');
         field.set(9, 1, 'Gray');
         field.set(9, 2, 'Empty');
 
-        const copied = field.copy();
+        field.set(0, -1, 'X');
+        field.set(9, -1, '_');
 
-        expect(copied.str({ separator: '' })).toEqual(
+        const field1 = Field.create(
             'LLL_______' +
             'LOO_______' +
-            'JOO_____TX' +
-            'JJJ______O' +
+            'JOO______X' +
+            'JJJ______O',
             'XXXXXXXXX_',
         );
+        expect(field.str()).toEqual(field1.str());
 
-        copied.put({ type: 'O', rotation: 'Spawn', x: 8, y: 10 });
+        expect(field.canFill({ type: 'I', rotation: 'Left', x: 9, y: 3 })).toEqual(true);
 
-        expect(copied.str({ separator: '' })).toEqual(
-            'LLL_____OO' +
-            'LOO_____OO' +
-            'JOO_____TX' +
-            'JJJ______O' +
+        field.fill({ type: 'I', rotation: 'Left', x: 9, y: 3 });
+
+        expect(field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 0 })).toEqual(true);
+        expect(field.canLock({ type: 'O', rotation: 'Spawn', x: 4, y: 1 })).toEqual(false);
+
+        field.put({ type: 'O', rotation: 'Spawn', x: 4, y: 10 });
+
+        const field2 = Field.create(
+            '              _________I' +
+            '_________I' +
+            'LLL______I' +
+            'LOO______I' +
+            'JOO_OO___X' +
+            'JJJ_OO___O',
             'XXXXXXXXX_',
         );
+        expect(field.str()).toEqual(field2.str());
+
+        const copied = field.copy();
+        expect(copied.str()).toEqual(field.str());
+        copied.set(0, 0, 'T');
+        expect(copied.str()).not.toEqual(field.str());
     });
 });
