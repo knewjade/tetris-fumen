@@ -13,9 +13,9 @@ function toMino(operationOrMino: Operation | Mino) {
 }
 
 export class Field {
-    public static create(field: string, garbage?: string): Field {
+    public static create(field?: string, garbage?: string): Field {
         return new Field(new InnerField({
-            field: PlayField.load(field),
+            field: field !== undefined ? PlayField.load(field) : undefined,
             garbage: garbage !== undefined ? PlayField.loadMinify(garbage) : undefined,
         }));
     }
@@ -45,14 +45,14 @@ export class Field {
         return !this.canFill({ ...operation, y: operation.y - 1 });
     }
 
-    fill(operation?: Operation | Mino): Mino | undefined {
+    fill(operation?: Operation | Mino, force: boolean = false): Mino | undefined {
         if (operation === undefined) {
             return undefined;
         }
 
         const mino = toMino(operation);
 
-        if (!this.canLock(mino)) {
+        if (!force && !this.canFill(mino)) {
             throw Error('Cannot fill piece on field');
         }
 
