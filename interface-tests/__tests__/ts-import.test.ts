@@ -1,9 +1,9 @@
-const { decoder, encoder, Field } = require('..');
+import { decoder, EncodePage, encoder, Field, Page } from '../../index';
 
-describe('js-require', () => {
+describe('ts-import', () => {
     test('Example: case1', () => {
-        const data = "v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA";
-        const pages = decoder.decode(data);
+        const data = 'v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
+        const pages: Page[] = decoder.decode(data);
 
         expect(pages.length).toEqual(7);
         expect(pages[0].comment).toEqual('Opening');
@@ -12,7 +12,7 @@ describe('js-require', () => {
 
     test('Example: case1 (URL)', () => {
         const data = 'https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
-        const pages = decoder.decode(data);
+        const pages: Page[] = decoder.decode(data);
 
         expect(pages.length).toEqual(7);
         expect(pages[0].comment).toEqual('Opening');
@@ -28,7 +28,7 @@ describe('js-require', () => {
     });
 
     test('Example: case2.2', () => {
-        const pages = [];
+        const pages: EncodePage[] = [];
         pages.push({
             field: Field.create(
                 'LLL_______' +
@@ -84,7 +84,7 @@ describe('js-require', () => {
         const field = page.field;
         expect(field.at(4, 0)).toEqual('_');
 
-        field.put(page.operation);  // field object is mutable
+        field.put(page.operation);
         expect(field.at(4, 0)).toEqual('I');
 
         const mino = page.mino();
@@ -148,5 +148,30 @@ describe('js-require', () => {
         expect(copied.str()).toEqual(field.str());
         copied.set(0, 0, 'T');
         expect(copied.str()).not.toEqual(field.str());
+    });
+
+    test('Fill the operation myself', () => {
+        const data = 'https://harddrop.com/fumen/?v115@vhGRQYHAvItJEJmhCAUGJKJJvMJTNJGBJFKYPAUEzP?EJG98AQmqhECDdCA';
+        const pages = decoder.decode(data);
+        const page = pages[3];
+        const field = page.field;
+
+        expect(field.str({ separator: '' })).toEqual(
+            'L__ZZ_____' +
+            'L___ZZ____' +
+            'LL_IIII___' +
+            '__________',
+        );
+
+        for (const { x, y } of page.mino().positions()) {
+            field.set(x, y, page.mino().type);
+        }
+
+        expect(field.str({ separator: '' })).toEqual(
+            'L__ZZ_S___' +
+            'L___ZZSS__' +
+            'LL_IIIIS__' +
+            '__________',
+        );
     });
 });
