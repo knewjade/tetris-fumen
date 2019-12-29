@@ -1,5 +1,7 @@
 # tetris-fumen
 
+![](https://github.com/knewjade/tetris-fumen/workflows/CI/badge.svg)
+
 `tetris-fumen` is a parser library to encode/decode tetris game state. Data compatible with [fumen](https://harddrop.com/fumen/), [連続テト譜エディタ](http://fumen.zui.jp/) can be created and manipulated.
 
 ## Features
