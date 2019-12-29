@@ -23,6 +23,9 @@
     "clean": "rm -rf lib/ && rm -f index.js index.d.ts",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "build": "npm run clean && tsc",
+    "test": "jest",
+    "test:src": "jest /src",
+    "test:artifact": "jest /interface-tests",
     "publish:npm": "npm run build && npm publish"
   },
   "devDependencies": {
