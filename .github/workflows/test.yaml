@@ -1,0 +1,17 @@
+name: test
+on:
+  push:
+    branches:
+    - '*'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - run: yarn install --frozen-lockfile
+    - run: yarn test:src
+    - run: yarn build
+    - run: yarn test:artifact
