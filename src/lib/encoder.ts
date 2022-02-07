@@ -57,6 +57,8 @@ export function encode(pages: EncodePage[]): string {
 
     const innerEncode = (index: number) => {
         const currentPage = pages[index];
+        currentPage.flags = currentPage.flags ? currentPage.flags : {};
+
         const field: Field = currentPage.field;
 
         const currentField: InnerField = field !== undefined ? createInnerField(field) : prevField.copy();

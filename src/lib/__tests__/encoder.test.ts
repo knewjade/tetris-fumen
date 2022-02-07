@@ -1,5 +1,6 @@
 import { decode } from '../decoder';
 import { encode } from '../encoder';
+import { Field } from '../field';
 
 describe('encoder', () => {
     describe('encode', () => {
@@ -94,6 +95,61 @@ describe('encoder', () => {
                 '2Blvs2A0EEfETY9KBlvs2A0?yDfETY12Blvs2AUxDfETYVOBlfnBCVbAAA';
             const pages = decode(fumen);
             expect(encode(pages)).toEqual(fumen.substr(5));
+        });
+    });
+
+    describe('encode from scratch', () => {
+        test('example1', () => {
+            const pages = [];
+            pages.push({
+                field: Field.create(
+                    'LLL_______' +
+                    'LOO_______' +
+                    'JOO_______' +
+                    'JJJ_______',
+                    'XXXXXXXXX_',
+                ),
+                comment: 'Perfect Clear Opener',
+            });
+
+            pages.push({
+                operation: {
+                    type: 'T', rotation: 'left', x: 9, y: 1,
+                },
+            });
+
+            pages.push({
+                operation: {
+                    type: 'Z', rotation: 'spawn', x: 7, y: 0,
+                },
+            });
+
+            pages.push({
+                operation: {
+                    type: 'S', rotation: 'spawn', x: 8, y: 2,
+                },
+            });
+
+            pages.push({
+                comment: 'Success: 61.19 %',
+                flags: {
+                    mirror: true,
+                },
+            });
+
+            pages.push({
+                comment: '(Mirror)',
+            });
+
+            expect(encode(pages)).toEqual('9gilGeglRpGeg0RpGei0GeI8AeAgWYAQIKvDll2TAS?IvBElCyTASIqPEFGNXEvhE9tB0sBXjBAwSYATwgkDlt0TAz?B88AQx2vAx178AwngHBAAPMAFbuYCJciNEyoAVB');
+        });
+
+        test('quiz only', () => {
+            const pages = [];
+            pages.push({
+                comment: '#Q=[](J)ZSLTIO',
+            });
+            expect(encode(pages)).toEqual('vhAAgWaAFLDmClcJSAVDEHBEooRBKoAVBaNExCJHBA?A');
         });
     });
 });
