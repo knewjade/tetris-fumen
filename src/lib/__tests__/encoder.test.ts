@@ -96,6 +96,11 @@ describe('encoder', () => {
             const pages = decode(fumen);
             expect(encode(pages)).toEqual(fumen.substr(5));
         });
+
+        test('all cyan', () => {
+            const pages = decode('v115@flAgH');
+            expect(encode(pages)).toEqual('flAgH');
+        });
     });
 
     describe('encode from scratch', () => {

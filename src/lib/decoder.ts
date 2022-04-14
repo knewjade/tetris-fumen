@@ -94,7 +94,7 @@ function innerDecode(data: string, fieldTop: number): Pages {
 
     const updateField = (prev: InnerField) => {
         const result = {
-            changed: false,
+            changed: true,
             field: prev,
         };
 
@@ -105,8 +105,8 @@ function innerDecode(data: string, fieldTop: number): Pages {
 
             const numOfBlocks = diffBlock % numFieldBlocks;
 
-            if (numOfBlocks !== numFieldBlocks - 1) {
-                result.changed = true;
+            if (diff === 8 && numOfBlocks === numFieldBlocks - 1) {
+                result.changed = false;
             }
 
             for (let block = 0; block < numOfBlocks + 1; block += 1) {

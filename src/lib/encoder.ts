@@ -231,7 +231,7 @@ function encodeField(prev: InnerField, current: InnerField) {
     };
 
     // フィールド値から連続したブロック数に変換
-    let changed = false;
+    let changed = true;
     let prev_diff = getDiff(0, 0);
     let counter = -1;
     for (let yIndex = 0; yIndex < FIELD_MAX_HEIGHT; yIndex += 1) {
@@ -241,7 +241,6 @@ function encodeField(prev: InnerField, current: InnerField) {
                 recordBlockCounts(prev_diff, counter);
                 counter = 0;
                 prev_diff = diff;
-                changed = true;
             } else {
                 counter += 1;
             }
@@ -250,6 +249,9 @@ function encodeField(prev: InnerField, current: InnerField) {
 
     // 最後の連続ブロックを処理
     recordBlockCounts(prev_diff, counter);
+    if (prev_diff === 8 && counter === FIELD_BLOCKS - 1) {
+        changed = false;
+    }
 
     return {
         changed,

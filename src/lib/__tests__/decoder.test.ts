@@ -1,7 +1,6 @@
 import { decode, extract } from '../decoder';
 import { createNewInnerField, InnerField, PlayField } from '../inner_field';
 import { Field } from '../field';
-import { encode } from '../encoder';
 
 enum Piece {
     I = 'I',
@@ -442,6 +441,23 @@ describe('decoder', () => {
                     quiz: true,
                 });
                 expect(page.refs.comment).toEqual(0);
+            }
+        });
+
+        test('all cyan', async () => {
+            const pages = await decode('v115@flAgH');
+
+            expect(pages).toHaveLength(1);
+
+            {
+                const page = pages[0];
+                expect(page.flags).toMatchObject({
+                    quiz: false,
+                });
+                expect(page.field).toEqual(to(new InnerField({
+                    field: PlayField.load('IIIIIIIIII'.repeat(23)),
+                    garbage: PlayField.loadMinify('IIIIIIIIII'),
+                })));
             }
         });
 
